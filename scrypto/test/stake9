@@ -1,0 +1,24 @@
+CALL_METHOD 
+    ComponentAddress("02a770be0b7c1016f4d062746e33ff1f563d2a2cffe2adf70becf2") "withdraw_by_amount" Decimal("900") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a");
+TAKE_FROM_WORKTOP_BY_AMOUNT 
+    Decimal("31") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("bucket1");
+CALL_METHOD 
+    ComponentAddress("021ffdc25fe0dbdc375c7ba873b7cc16b5071d281f0dec99a06be7") "stake" Bucket("bucket1");
+TAKE_FROM_WORKTOP_BY_AMOUNT 
+    Decimal("95") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("bucket2");
+CALL_METHOD 
+    ComponentAddress("028b512dd9eb28731c5bfdb7d67a94bb52d9a676939bc99f3e9dcc") "stake" Bucket("bucket2");
+TAKE_FROM_WORKTOP_BY_AMOUNT 
+    Decimal("75") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("bucket3");
+CALL_METHOD 
+    ComponentAddress("02b478f168948c9b69887281650c3de8340e992c348bde24b1c312") "stake" Bucket("bucket3");
+TAKE_FROM_WORKTOP_BY_AMOUNT 
+    Decimal("24") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("bucket4");
+CALL_METHOD 
+    ComponentAddress("026201c9f6846b63bc6117705da430954068fbce67a4aec4640336") "stake" Bucket("bucket4");
+TAKE_FROM_WORKTOP_BY_AMOUNT 
+    Decimal("65") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("bucket5");
+CALL_METHOD 
+    ComponentAddress("0210e264838177a3e47dee61b21a3f6603baf7a13999688fe99095") "stake" Bucket("bucket5");
+CALL_METHOD_WITH_ALL_RESOURCES 
+    ComponentAddress("02e0905317d684478c275540e2ed7170f217e0c557805f7fd2a0d3") "deposit_batch";

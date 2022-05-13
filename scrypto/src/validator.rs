@@ -44,6 +44,8 @@ blueprint! {
                 .burnable(rule!(require(controller_badge.resource_address())), LOCKED)
                 .no_initial_supply();
 
+            info!("{} Staker Badge: {}", name.clone(), staker_badge);
+
             let rules = AccessRules::new()
                 .method("change_fee", rule!(require(badge)))
                 .method("withdraw_fee", rule!(require(badge)))
@@ -124,11 +126,13 @@ blueprint! {
 
         }
 
-        pub fn get_my_stake_amount(&mut self, identity: Bucket) -> (Decimal, Bucket) {
+        pub fn show_my_stake_amount(&mut self, identity: Bucket) -> Bucket {
             
             let id = identity.non_fungible::<Staker>().id();
 
-            return (self.staker[&id], identity)
+            info!("You have staked {} NAR to {} validator", self.staker[&id],self.name);
+            
+            return identity
 
         }
 

@@ -1,0 +1,22 @@
+CALL_METHOD ComponentAddress("020d3869346218a5e8deaaf2001216dc00fcacb79fb43e30ded79a") "withdraw_by_amount" Decimal("10000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura");
+CALL_METHOD ComponentAddress("02e0905317d684478c275540e2ed7170f217e0c557805f7fd2a0d3") "deposit" Bucket("1000neura");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura2");
+CALL_METHOD ComponentAddress("02b61acea4378e307342b2b684fc35acf0238a4accb9f91e8a4364") "deposit" Bucket("1000neura2");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura3");
+CALL_METHOD ComponentAddress("0200098f161a7691fa7ae380e41aed27ab5c4f969e8e563ce4275a") "deposit" Bucket("1000neura3");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura4");
+CALL_METHOD ComponentAddress("0204f0d4b3887be90714f1025f9df6d2d99fe26e5316bf1e9c58ba") "deposit" Bucket("1000neura4");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura5");
+CALL_METHOD ComponentAddress("021810550ac72cd6d5a31c7e534394fe66339df0d1cfc0d3e21a46") "deposit" Bucket("1000neura5");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura6");
+CALL_METHOD ComponentAddress("02f9835f5baa636568ba5f4d8308a7f28a7fba710960c964082069") "deposit" Bucket("1000neura6");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura7");
+CALL_METHOD ComponentAddress("02dbf0bacfcecf4a65419ea97d079aed4c909facc4c48ca66ef455") "deposit" Bucket("1000neura7");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura8");
+CALL_METHOD ComponentAddress("02473652804f6afa95f23a46b8eac7819a912a65504e55e0018bf9") "deposit" Bucket("1000neura8");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura9");
+CALL_METHOD ComponentAddress("02a770be0b7c1016f4d062746e33ff1f563d2a2cffe2adf70becf2") "deposit" Bucket("1000neura9");
+TAKE_FROM_WORKTOP_BY_AMOUNT Decimal("1000") ResourceAddress("0351045a85127b83f17fcd5ab751ef85ded4144cf900d98be1041a") Bucket("1000neura10");
+CALL_METHOD ComponentAddress("022d4764c89781a453754ef1ee1d61947f403bf68af933f135027e") "deposit" Bucket("1000neura10");
+

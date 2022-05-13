@@ -44,7 +44,6 @@ blueprint! {
         system_time: u64,
         round_start: bool,
         active_validators: HashMap<ComponentAddress, Decimal>,
-        new_api: bool,
         mint_controller_badge: Vault
 
     }
@@ -149,7 +148,6 @@ blueprint! {
                 system_time: system_time,
                 round_start: false,
                 active_validators: HashMap::new(),
-                new_api: true,
                 mint_controller_badge: Vault::with_bucket(mint_controller_badge)
                 }
                 .instantiate()
@@ -184,9 +182,7 @@ blueprint! {
             let validator_address = Validator::new(self.neura, self.controller_badge.resource_address(), badge.resource_address(), name, fee, self.unstake_delay);
 
             badge.non_fungible::<ValidatorData>().data().address = validator_address.to_string();
-
-            info!("Validator address: {}", validator_address);
-
+            
             self.validators.push((validator_address, Decimal::zero()));
 
             return (validator_address, badge)
@@ -224,11 +220,6 @@ blueprint! {
         }
 
         pub fn become_new_user(&mut self, mut payment: Bucket, api: String, query: String) -> (Bucket, Bucket) {
-
-            assert!(
-                self.new_api == true,
-                "Cannot add more api for now, please use existing api on the ecosystem."
-            );
 
             let amount = payment.amount();
 
@@ -269,8 +260,6 @@ blueprint! {
                 api.new_query(query);
 
             };
-
-            self.new_api = false;
 
             return (badge, payment)
             
@@ -353,9 +342,9 @@ blueprint! {
                 let validator: Validator = validator_address.into();
 
                 weight = validator.get_current_staked_value();
-
-                validator.reset_status();
-
+                self.controller_badge.authorize(|| {
+                    validator.reset_status();
+                });
             }
 
             if self.stage == 1 {
@@ -410,13 +399,15 @@ blueprint! {
                         data_api.end_round(self.active_validators.clone());
                     }
                 });
-
+                self.controller_badge.authorize(|| {
                 for (api, time) in &mut self.non_validated_apis.clone() {
                     
                     let result = vote_for_api(api.clone(), self.active_validators.clone());
                     match result {
                         Some(true) => {
-                            self.new_api(api.clone());
+                        
+                            self.new_api(api.clone())
+                            
                         }
                         None => {
                             self.non_validated_apis.get_mut(&api.clone()).unwrap().0 += 1;
@@ -427,14 +418,12 @@ blueprint! {
                             self.non_validated_apis.get_mut(&api.clone()).unwrap().0 += 1;}
                         }
                     }
-                    
                 }
-                
+            });
+                //self.controller_badge.authorize(|| { });
             }
 
             else {
-
-                self.controller_badge.authorize(|| {
 
                     for (_api, &address) in &self.data_apis {
 
@@ -442,7 +431,24 @@ blueprint! {
                         data_api.end_round(self.validators.clone().into_iter().collect());
 
                     }
-                })
+                    for (api, time) in &mut self.non_validated_apis.clone() {
+                    
+                        let result = vote_for_api(api.clone(), self.validators.clone().into_iter().collect());
+                        match result {
+                            Some(true) => {
+                                self.new_api(api.clone());
+                            }
+                            None => {
+                                self.non_validated_apis.get_mut(&api.clone()).unwrap().0 += 1;
+                            }
+                            Some(false) => {
+                                if time.0 >= 9 {self.non_validated_apis.remove(api);}
+                                else {
+                                self.non_validated_apis.get_mut(&api.clone()).unwrap().0 += 1;}
+                            }
+                        }
+                    }
+                    //self.controller_badge.authorize(|| {})
             }
 
             self.system_time = current/self.round_length + 1;
@@ -453,7 +459,7 @@ blueprint! {
 
         pub fn new_stable_coin_project(&mut self, pegged_to: String, api: String) -> ComponentAddress {
 
-            let mut query: String = "NAR ".to_owned();
+            let mut query: String = "NAR/".to_owned();
             let pegged = pegged_to.clone();
             let peg = pegged.as_str();
             query.push_str(peg);
@@ -476,7 +482,7 @@ blueprint! {
 
             let stable_coin_project_address = NStableCoin::new(self.neura, pegged_to.clone(), query, api_address, controller_badge, self.fee_stablecoin);
 
-            self.stable_coins.insert(stable_coin_project_address, pegged_to + " NStable Coin");
+            self.stable_coins.insert(stable_coin_project_address, pegged_to + "NStable Coin");
 
             return stable_coin_project_address
 
@@ -503,6 +509,5 @@ blueprint! {
         pub fn set_unstake_delay(&mut self, new_unstake_delay: u64) {
             self.unstake_delay = new_unstake_delay
         }
-
     }
 }
