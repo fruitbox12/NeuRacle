@@ -1,0 +1,18 @@
+# Get new demo environment
+source ./build.sh
+
+log "Create new account to instantiate the NeuRacle component and become admin"
+
+resim new-account
+ADMIN=02e0905317d684478c275540e2ed7170f217e0c557805f7fd2a0d3
+ADMIN_PUBKEY=04b9464c2aaab39bca423382bce1de92a4782b178338e316d0304585c847a0771a0e27e2d39b4fd3766305b94c8a1448c88580e2836bcbde9bb1281e3aa2bcd2ef
+ADMIN_PIRKEY=35be322d094f9d154a8aba4733b8497f180353bd7ae7b0a15f90b586b549f28b
+
+resim run ./neuracle_instantiate.rtm
+
+log "Create 10 validators account"
+
+resim new-account
+VALIDATOR1=02e0905317d684478c275540e2ed7170f217e0c557805f7fd2a0d3
+VALIDATOR1_PUBKEY=04b9464c2aaab39bca423382bce1de92a4782b178338e316d0304585c847a0771a0e27e2d39b4fd3766305b94c8a1448c88580e2836bcbde9bb1281e3aa2bcd2ef
+VALIDATOR1_PIRKEY=35be322d094f9d154a8aba4733b8497f180353bd7ae7b0a15f90b586b549f28b

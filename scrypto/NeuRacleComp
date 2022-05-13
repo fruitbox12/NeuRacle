@@ -1,0 +1,2 @@
+CALL_FUNCTION PackageAddress("01f6428d3f2d084ebad4e5bbd7aff2e0ee882fec53250e9cba832f") "NeuRacle" "new" 100u32 1u64 Decimal("1") Decimal("0.3") 500u64 Decimal("0.0015") Decimal("10");
+CALL_METHOD_WITH_ALL_RESOURCES ComponentAddress("021025cfda90adea21506170be47c67ec169e41dbbdd063d54d409") "deposit_batch";
