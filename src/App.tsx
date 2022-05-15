@@ -52,7 +52,7 @@ function App() {
             Publish package
           </button> 
         <p>
-          Package Address: {packageAddress}
+          Package Address: "<a style={green}>{packageAddress}</a>
         </p>
         </p>
       </header>

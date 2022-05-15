@@ -21,11 +21,11 @@ Components = Components.
 
 Validators are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway.
 
-NeuRacle Gateway is an off-chain entity that will play role as a medium to fetch data source on-chain, use the source to fetch data off-chain, and automatize voting, feeding data on-chain on validator behalf.
+NeuRacle Gateway is an off-chain entity that will play role as a medium to fetch data sources on-chain, use the source to fetch data off-chain, and automatize voting, feeding data on-chain on validator behalf.
 
 NeuRacle will let users to choose data from any online source they want from, they can also choose on-chain aggregrated data but that will ofc more costly.
 
-Users will have to take responsibility on the accessibility of sources. The data source can be public, or private data. User will have to provide an online and accessible API (and key, if that's a private data) to the NeuRacle Gateway. NeuRacle will help user to choose (or host) an API, but will not buy the data on user's behalf.
+Users will have to take responsibility on the accessibility of sources. The data source can be public, or private data. User will have to provide an online and accessible API (and key, if that's a private data) to the NeuRacle Gateway. NeuRacle will also help user to choose (or host) an API that return the exact data user want, but will not buy the data on user's behalf.
 
 To help the Gateway feedback the precise data that users need, the data source API should return only that one specific data. It shouldn't be a chunk of datas.
 
@@ -45,6 +45,6 @@ This won't just stay on crypto world, on real world too, different address, loca
 
 Seller, provider, manufacturer can also use NeuRacle service to validate their product's price, and give buyer a nft prove their possesion of the product without having to sell it in reality! Eg: real estate, automobile, oil, gold, even home grocery...
 
-Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux). User can also buy that data and make a data feeding request on NeuRacle.
+Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
 
-For simplication, this prototype will only serve non-aggregrated and assume that we already have the off-chain Gateway. Data will also be validated (Reaching Consensus) in 1 round of voting.
+For simplication, this prototype will only serve non-aggregrated on-chain data and use a prototype of the Gateway. Data will also be validated (Reaching Consensus) in 1 round of voting.
