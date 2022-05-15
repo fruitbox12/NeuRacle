@@ -1,2 +1,0 @@
-cargo:rustc-env=TYPENUM_BUILD_CONSTS=C:\Users\ANT\Peter-s-Work-Space\NeuRacle\scrypto\target\wasm32-unknown-unknown\release\build\typenum-9c0dc99bd533aa01\out\consts.rs
-cargo:rustc-env=TYPENUM_BUILD_OP=C:\Users\ANT\Peter-s-Work-Space\NeuRacle\scrypto\target\wasm32-unknown-unknown\release\build\typenum-9c0dc99bd533aa01\out\op.rs

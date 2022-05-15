@@ -22,7 +22,7 @@ pub fn assert_fee(fee: Decimal) {
     );
 }
 
-pub fn vote_for_api(api: String, validators: HashMap<ComponentAddress, Decimal>) -> Option<bool> {
+pub fn vote_for_data(validators: HashMap<ComponentAddress, Decimal>) -> Option<bool> {
 
     let mut total_weight: Decimal = Decimal::zero();
 
@@ -32,7 +32,7 @@ pub fn vote_for_api(api: String, validators: HashMap<ComponentAddress, Decimal>)
 
                 let validator: Validator = address.into();
                 if validator.get_status() {
-                    if validator.get_vote(api.clone()) {result += weight}
+                    if validator.get_vote() {result += weight}
                     total_weight += weight
                 }
             }

@@ -1,0 +1,12 @@
+CALL_METHOD 
+    ComponentAddress("${ADMIN_ACC}") "withdraw_by_amount" Decimal("1") ResourceAddress("${ADMIN_BADGE}");
+TAKE_FROM_WORKTOP 
+    ResourceAddress("${ADMIN_BADGE}") Bucket("bucket");
+CREATE_PROOF_FROM_BUCKET 
+    Bucket("bucket") Proof("admin_proof");
+PUSH_TO_AUTH_ZONE 
+    Proof("admin_proof");
+CALL_METHOD 
+    ComponentAddress("${COMP}") "new_round";
+CALL_METHOD_WITH_ALL_RESOURCES 
+    ComponentAddress("${ADMIN_ACC}") "deposit_batch";
