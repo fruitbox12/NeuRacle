@@ -64,8 +64,6 @@ Eg: Bob operating a USX stable coin project and using aggregrated "XRD/USD last 
 
 This won't just stay on crypto world, on real world too, different address, location, seller will provide different information. USA oil price will ofc different from Russia oil price. Pork from your locally will ofc different from the farm.
 
-Seller, provider, manufacturer can also use NeuRacle service to validate their product's price, and give buyer a nft prove their possesion of the product **without having to know the customer identity!** Eg: real estate, automobile, oil, gold, even home grocery...
-
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
 
 ### Data refreshing round.
@@ -92,19 +90,14 @@ Round concluded requirement is >2/3 active validators.
 
 Datas with >2/3 staked weight of that round will also be validated.
 
+## What bad things won't happend on NeuRacle?
+
+**Low performance Validators**: The data update will happen at the "almost same time" in every validators. Assume we have some validator with low performance that lead to a data update "slightly different", that validator will right away deemed as "untruthful" and punished. This punish and reward mechanism will ensure all validator to host and ensure the Gateway in the best performance.
+
+**Single point of failure**: The validating system is decentralized, there is no single point of failure. 
+
 ## What bad things might happend on NeuRacle?
 
-**Vulnerability** (or break security): NeuRacle has the same Sybil Resistance as Radix Network, malicious entities will need >1/3 staked value  to break liveness, >2/3 staked value to really conduct a meaningful attack. Based on game-theory, that attack will really hard and costly. With sharded NeuRacle, the validator sets, as well as the data sources they may validate in the next round, will all be randomized, make the attack become almost impossible.
-    
-**Break liveness**: The data update will happen at the "almost same time" in every validators. Assume we have some validator
-with low performance that will make the data "slightly different", that validator will right away deemed as "untruthful" and punished. This punish and reward mechanism will ensure all validator to host and ensure the Gateway in the best performance.
-
-
-## Use case:
-
-**Algorithmed stable coin**: Despite the current failure of Luna Ecosystem, I still have a high trust that **stable coin is a bridge between Crypto - Fiat worlds, so it should have traits of both**. The algorithmed stablecoin on DeFi world can be backed by algorithm **and** at the same time backed by fiat when traded in real world.
-
-## Future work
-
+**Security, Liveness Break**: NeuRacle has the same Sybil Resistance as Radix Network, malicious entities will need >1/3 staked value to break liveness, >2/3 staked value to really conduct a meaningful attack. Based on game-theory, that attack will really hard and costly. With sharded NeuRacle, the validator sets, as well as the data sources they may validate in the next round will all be randomized, make an attack become almost impossible.
 
 *I'm still an amateur on cryptography and distributed technology, in this work there may still contain something wrong or haven't taken into account. I'm glad to have any contributor to this work.*

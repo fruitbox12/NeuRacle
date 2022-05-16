@@ -1,0 +1,24 @@
+use std::collections::*;
+
+fn main() {
+    let map1 = BTreeMap::from([
+        ("Mercury", 0.4),
+        ("Venus", 0.7),
+        ("Earth", 1.0),
+        ("Mars", 1.5),
+    ]);
+
+    let map2 = BTreeMap::from([
+        ("Mercury", 0.4),
+        ("Venus", 0.7),
+        ("Earth", 1.0),
+        ("Mars", 1.1),
+    ]);
+
+    if map1 == map2 {
+        print!("yes")
+    }
+    else {
+        print!("no")
+    }
+}

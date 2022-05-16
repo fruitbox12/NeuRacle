@@ -24,7 +24,7 @@ blueprint! {
 
     struct NeuRacle {
 
-        datas: HashMap<String, String>,
+        datas: BTreeMap<String, String>,
         non_validated_datas: HashMap<String, String>,
         stable_coins: LazyMap<ComponentAddress, String>,
         validators: Vec<(ComponentAddress, Decimal)>,
@@ -130,7 +130,7 @@ blueprint! {
                 .default(rule!(allow_all));
 
             let component = Self {
-                datas: HashMap::new(),
+                datas: BTreeMap::new(),
                 non_validated_datas: HashMap::new(),
                 stable_coins: LazyMap::new(),
                 validators: Vec::new(),
@@ -312,7 +312,7 @@ blueprint! {
             return (identity, my_data)
         }
 
-        pub fn new_round(&mut self) -> (HashMap<String, String>, Bucket) {
+        pub fn new_round(&mut self) -> Bucket {
             
             assert!(
                 self.round_start == false,
@@ -326,16 +326,15 @@ blueprint! {
                 "Not time to start a new round yet!"
             );
 
-            #[allow(unused_variables)]
             self.controller_badge.authorize(|| {
 
-                self.validators.iter().for_each(|&(validator_address, mut weight)| {
+                self.validators.iter_mut().for_each(|(validator_address, weight)| {
 
-                    let validator: Validator = validator_address.into();
+                    let validator: Validator = validator_address.clone().into();
 
-                    weight = validator.get_current_staked_value();
+                    *weight = validator.get_current_staked_value();
                 
-                    validator.reset_status();
+                    validator.round_start();
 
                 });
             });
@@ -346,7 +345,7 @@ blueprint! {
                 borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("2"))
             });
 
-            info!("You got {} NAR for start a NeuRacle voting round", reward.amount());
+            info!("You are rewarded {} NAR for start a NeuRacle round", reward.amount());
 
             self.round_start = true;
 
@@ -360,36 +359,15 @@ blueprint! {
                     Some(x) => self.active_validators = x.iter().cloned().collect(),
                     None => self.active_validators = self.validators.iter().cloned().collect()
                 }
-                
-                let random_leader_validator: (ComponentAddress, Decimal) = self.active_validators.clone().drain().next().unwrap();
-                let validator: Validator = random_leader_validator.0.into();
-
-                self.controller_badge.authorize(|| {
-                    self.non_validated_datas = validator.get_data();
-                });
-                
-                self.leader = Some(random_leader_validator.0);
-
-                return (validator.get_data(), reward)
-
             }
 
             else {
                 
                 self.active_validators = self.validators.iter().cloned().collect();
 
-                let random_leader_validator: (ComponentAddress, Decimal) = self.active_validators.clone().drain().next().unwrap();
-
-                let validator: Validator = random_leader_validator.0.into();
-
-                self.controller_badge.authorize(|| {
-                    self.non_validated_datas = validator.get_data();
-                });
-                
-                self.leader = Some(random_leader_validator.0);
-
-                return (validator.get_data(), reward)
             }
+
+            return reward
         }
 
         pub fn end_round(&mut self) -> Bucket {
@@ -401,13 +379,13 @@ blueprint! {
         
             let mut val: HashMap<ComponentAddress, Decimal> = HashMap::new();
 
-            self.active_validators.iter().for_each(|(&address, weight)| {
+            self.active_validators.iter().for_each(|(&address, &weight)| {
     
                 let validator: Validator = address.into();
                     
                 if validator.get_status() {
                     
-                    val.insert(address, weight.clone());
+                    val.insert(address, weight);
                     
                 }
             });
@@ -417,67 +395,55 @@ blueprint! {
                 "Not enough validator active yet!"
             );
 
-            let reward = self.controller_badge.authorize(|| {
-                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("4"))
-            });
-
             self.active_validators = val;
 
-            let current = Runtime::current_epoch();
+            let mut all_datas: HashMap<BTreeMap<String, String>, Decimal> = HashMap::new();
+            let mut total_weight = Decimal::zero();
 
-            let result = vote_for_data(self.active_validators.clone());
+            self.active_validators.iter().for_each(|(&address, &weight)| {
 
-            match result {
+                let validator: Validator = address.into();
+                let datas = validator.get_data();
+                if all_datas.contains_key(&datas) {
+                    if let Some(x) = all_datas.get_mut(&datas) {
+                        *x += weight;
+                    }
+                }
+                else {
+                    all_datas.insert(datas.clone(), weight);
+                }
+                total_weight += weight
+            });
 
-            Some(true) => {
+            let result = all_datas.iter().max_by_key(|entry | entry.1).unwrap();
+            let data = result.0.clone();
+            let weight = result.1.clone();
 
-                self.datas = self.non_validated_datas.clone();
-
-                    self.controller_badge.authorize(|| {
-
+            if weight*dec!("3") >= total_weight*dec!("2") {
+                self.datas = data;
+                self.controller_badge.authorize(|| {
                     self.active_validators.iter().for_each(|(&address, _weight)| {
     
                         let validator: Validator = address.into();
-                            
-                        if validator.get_status() {
-                            if validator.get_vote() {validator.mint(self.reward_rate)}
+                        if validator.get_data() == self.datas.clone() {validator.mint(self.reward_rate)}
                             else {validator.burn(self.reward_rate * self.punishment)}
-                            
-                            }
-                        });  
-                    });
-                }
-            None => {}
-
-            Some(false) => {
-
-                let malicious_validator: Validator = self.leader.unwrap().into();
-                malicious_validator.burn(self.reward_rate * self.punishment * dec!("5")); //malicious validator will be punished 5 times untruthful validator
-
-                    self.controller_badge.authorize(|| {
-
-                    self.active_validators.iter().for_each(|(&address, _weight)| {
-
-                        let validator: Validator = address.into();
-                            
-                        if validator.get_status() {
-
-                            if validator.get_vote() {validator.burn(self.reward_rate * self.punishment)}
-                            else {validator.mint(self.reward_rate)}
-
-                        }
-                    }); 
-                });
-                }
+                    })  
+                })
             }
 
             info!("End round {} of NeuRacle", self.system_time);
 
-            info!("You got {} NAR for ending a NeuRacle voting round", reward.amount());
+            let current = Runtime::current_epoch();
 
             self.system_time = current/self.round_length + 1;
 
             self.round_start = false;
+
+            let reward = self.controller_badge.authorize(|| {
+                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("4"))
+            });
+
+            info!("You are rewarded {} NAR for ending a NeuRacle round", reward.amount());
 
             return reward
             

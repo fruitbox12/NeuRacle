@@ -25,8 +25,8 @@ blueprint! {
         staker_badge: ResourceAddress,
         neura: ResourceAddress,
         unstake_delay: u64,
-        datas: HashMap<String, String>,
-        vote: bool,
+        datas: BTreeMap<String, String>,
+        round_start: bool,
         active: bool
 
     }
@@ -54,7 +54,7 @@ blueprint! {
                 .method("withdraw_fee", rule!(require(badge)))
                 .method("update_data", rule!(require(badge)))
                 .method("vote", rule!(require(badge)))
-                .method("reset_status", rule!(require(neura_controller_badge)))
+                .method("round_start", rule!(require(neura_controller_badge)))
                 .method("get_datas", rule!(require(neura_controller_badge)))
                 .method("mint", rule!(require(neura_controller_badge)))
                 .method("burn", rule!(require(neura_controller_badge)))
@@ -71,8 +71,8 @@ blueprint! {
                 staker_badge: staker_badge,
                 neura: neura,
                 unstake_delay: unstake_delay,
-                datas: HashMap::new(),
-                vote: false,
+                datas: BTreeMap::new(),
+                round_start: false,
                 active: false
                 }
                 .instantiate()
@@ -278,31 +278,29 @@ blueprint! {
         }
 
         pub fn update_data(&mut self, datas: HashMap<String, String>) {
-            self.datas = datas
-        }
 
-        pub fn vote(&mut self, vote: bool) {
-
-            self.active = true;
+            assert!(
+                self.round_start == true,
+                "The round haven't started, you can't update data yet"
+            );
             
-            self.vote = vote
+            self.datas = datas.into_iter().collect();
+            self.active = true;
+            self.round_start = false
 
         }
 
-        pub fn reset_status(&mut self) {
-            self.active = false
+        pub fn round_start(&mut self) {
+            self.active = false;
+            self.round_start = true
         }
 
         pub fn get_status(&self) -> bool {
             self.active
         }
 
-        pub fn get_data(&self) -> HashMap<String, String> {
+        pub fn get_data(&self) -> BTreeMap<String, String> {
             self.datas.clone()
-        }
-
-        pub fn get_vote(&self) -> bool {
-            self.vote
         }
 
         pub fn mint(&mut self, rate: Decimal) {

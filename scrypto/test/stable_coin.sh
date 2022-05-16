@@ -15,7 +15,7 @@ export USDN=`echo $output | cut -d " " -f1`
 export SC_COMP=`echo $output | cut -d " " -f2`
 
 logc "Run a data voting round to get newest data."
-source ./vote_round.sh
+source ./data_refresh_round.sh
 
 logc "Begin swap"
 
