@@ -24,7 +24,7 @@ resim set-default-account $ADMIN_ACC $ADMIN_PIV
 
 output=`resim run ./transaction_manifest/start_round |  awk '/HashMap<String, String>/ {print $FS}'`
 
-output2=`echo $output | cut -d "(" -f2 | cut -d ")" -f1 | sed 's/"//g'`
+output2=`echo $output | cut -d "(" -f3 | cut -d ")" -f1 | sed 's/"//g'`
 
 IFS=', '
 

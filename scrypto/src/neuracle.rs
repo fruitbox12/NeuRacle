@@ -51,7 +51,7 @@ blueprint! {
 
     impl NeuRacle {
 
-        ///For easier understanding, I will just provide example of input parameters.
+        ///For easier understanding, I will just explain the input parameters by examples.
         ///validator_cap = 100 (same as Radix Olympia) > Data will only be choosen from top 100 validator.
         ///round_length = 1 > Data will be refreshed after 1 epoch. Current Scrypto version can only use this unit of timestamp. 
         ///Later NeuRacle will use transactions amount as unit of timestamp. 
@@ -64,6 +64,7 @@ blueprint! {
         ///reward_rate(%) = 0.0015 > stakers will earn 0.0015% of staked amount per round
         ///if round length = 1 epoch, estimated is 1 hour, that's about 13.14% APY.
         ///punishment = 5 > staked value will be slashed by 10 * reward rate on untruthful behavior.
+        ///The output is NeuRacle Component address, initial Neura token bucket and the admin badge.
         pub fn new(validator_cap: usize, round_length: u64, pay_rate: Decimal, fee_stablecoin: Decimal, unstake_delay: u64, reward_rate: Decimal, punishment: Decimal) -> (ComponentAddress, Bucket, Bucket) {
 
             let system_time = Runtime::current_epoch() / round_length;
@@ -123,9 +124,8 @@ blueprint! {
                 .method("create_new_validator_node", rule!(require(admin_badge.resource_address())))
                 .method("advance_stage", rule!(require(admin_badge.resource_address())))
                 .method("set_unstake_delay", rule!(require(admin_badge.resource_address())))
-                .method("new_round", rule!(require(admin_badge.resource_address())))
-                .method("end_round", rule!(require(admin_badge.resource_address())))
                 .method("new_stable_coin_project", rule!(require(admin_badge.resource_address())))
+                .method("set_round_length", rule!(require(admin_badge.resource_address())))
                 .method("new_api", rule!(require(controller_badge.resource_address())))
                 .default(rule!(allow_all));
 
@@ -312,7 +312,7 @@ blueprint! {
             return (identity, my_data)
         }
 
-        pub fn new_round(&mut self) -> HashMap<String, String> {
+        pub fn new_round(&mut self) -> (HashMap<String, String>, Bucket) {
             
             assert!(
                 self.round_start == false,
@@ -342,6 +342,12 @@ blueprint! {
 
             info!("Start voting round number {} of NeuRacle", self.system_time);
 
+            let reward = self.controller_badge.authorize(|| {
+                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("2"))
+            });
+
+            info!("You got {} NAR for start a NeuRacle voting round", reward.amount());
+
             self.round_start = true;
 
             if self.stage == 1 {
@@ -364,7 +370,7 @@ blueprint! {
                 
                 self.leader = Some(random_leader_validator.0);
 
-                return validator.get_data()
+                return (validator.get_data(), reward)
 
             }
 
@@ -382,11 +388,11 @@ blueprint! {
                 
                 self.leader = Some(random_leader_validator.0);
 
-                return validator.get_data()
+                return (validator.get_data(), reward)
             }
         }
 
-        pub fn end_round(&mut self) {
+        pub fn end_round(&mut self) -> Bucket {
             
             assert!(
                 self.round_start == true,
@@ -410,6 +416,10 @@ blueprint! {
                 val.len()*3 > self.active_validators.len()*2,
                 "Not enough validator active yet!"
             );
+
+            let reward = self.controller_badge.authorize(|| {
+                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("4"))
+            });
 
             self.active_validators = val;
 
@@ -458,15 +468,18 @@ blueprint! {
                         }
                     }); 
                 });
-                    
                 }
             }
 
             info!("End round {} of NeuRacle", self.system_time);
 
+            info!("You got {} NAR for ending a NeuRacle voting round", reward.amount());
+
             self.system_time = current/self.round_length + 1;
 
-            self.round_start = false
+            self.round_start = false;
+
+            return reward
             
         }
 
@@ -527,6 +540,10 @@ blueprint! {
 
         pub fn set_unstake_delay(&mut self, new_unstake_delay: u64) {
             self.unstake_delay = new_unstake_delay
+        }
+
+        pub fn set_round_length(&mut self, new_round_length:u64) {
+            self.round_length = new_round_length
         }
     }
 }

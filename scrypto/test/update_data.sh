@@ -3,7 +3,7 @@
 #set -x
 set -e
 
-logc "Validators get api list from NeuRacle component, fetch and feed data to the system"
+logc "The Gateway get api list from NeuRacle component, fetch and feed data to the system"
 logy "This will take a bit"
 
 text=`./neuracle_gateway.exe`
@@ -38,7 +38,7 @@ export VALUP_ADDRESS=$VAL3_ADDRESS
 export VALUP_ACC=$VAL3_ACC
 resim run ./transaction_manifest/update_data
 
-logy "Let one validator to behave malicious"
+logy "Let one validator to intervene in the Gateway process and behave malicious"
 resim set-default-account $VAL4_ACC $VAL4_PIV
 export VALUP_ADDRESS=$VAL4_ADDRESS
 export VALUP_ACC=$VAL4_ACC

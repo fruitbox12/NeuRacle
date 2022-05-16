@@ -69,5 +69,6 @@ resim call-method $COMP get_data 1,$USER_BADGE || true
 
 logg "User funding account again to get data."
 resim call-method $COMP refund_account 1,$USER_BADGE 100,$NEURA 
+resim call-method $COMP get_data 1,$USER_BADGE 
 
 completed
