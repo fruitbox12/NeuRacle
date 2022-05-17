@@ -80,7 +80,9 @@ blueprint! {
 
             if token == self.neura {
 
-                let amount: Decimal = token_bucket.amount() * price;
+                let initial_amount: Decimal = token_bucket.amount();
+
+                let amount: Decimal = initial_amount * price;
 
                 let stable_coin_bucket = self.controller_badge.authorize(|| {
                     borrow_resource_manager!(self.stablecoin).mint(amount)
@@ -88,14 +90,16 @@ blueprint! {
 
                 self.controller_badge.authorize(|| borrow_resource_manager!(self.neura).burn(token_bucket));
 
-                info!("You got {} {} after using auto swap.", amount, self.pegged_to.clone() + "N");
+                info!("You have swappd {} {} for {} {}.", initial_amount, self.symbol, amount, self.pegged_to.clone() + "N");
 
                 return stable_coin_bucket
             }
 
             else {
 
-                let amount: Decimal = token_bucket.amount() / price;
+                let initial_amount: Decimal = token_bucket.amount();
+
+                let amount: Decimal = initial_amount / price;
 
                 let medium_token_bucket = self.controller_badge.authorize(|| {
                     borrow_resource_manager!(self.stablecoin).mint(amount)
@@ -105,7 +109,7 @@ blueprint! {
                     token_bucket.burn()
                 });
 
-                info!("You got {} {} after using auto swap.", amount, self.symbol);
+                info!("You have swappd {} {} for {} {}.", initial_amount, self.pegged_to.clone() + "N", amount, self.symbol);
 
                 return medium_token_bucket
             }

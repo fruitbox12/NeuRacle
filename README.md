@@ -5,11 +5,11 @@
 
 NeuRacle is a PoS Layer 2 solution built on Radix Ledger that provide decentralized, trustless data validation service to bring-in off-chain data.
 
-## Oracle Trilemma:
+## Oracle Trilemma
 
 Most traditional Oracle recent day come to the same [problem](https://encyclopedia.pub/entry/2959), that have to either compromised on trustless (using trusted identities to bring data on-chain, eg: [ChainLink](https://james-sangalli.medium.com/why-chainlink-is-not-the-oracle-of-the-future-8bb859a81947#:~:text=ChainLink%20does%20not%20have%20a,centralised%20verification%20and%20dispute%20resolution.), finality (like using optimistic oracle, bet to bring data on-chain, eg: [UMA](https://umaproject.org/products/optimistic-oracle)), or security. It's almost the same as the [blockchain trilemma](https://www.ledger.com/academy/what-is-the-blockchain-trilemma).
 
-## From Oracle to Distributed Ledger Technology:
+## From Oracle to Distributed Ledger Technology
 
 Because the Oracle trilemma is almost the same as blockchain trilemma, choose a blockchain solution as an [oracle solution](https://medium.com/@jameslee777/decentralized-trustless-oracles-dto-by-piggybacking-on-timestamp-consensus-rules-2adce34d67b6) will be an innovated approach. There already some successful Oracle that are using this approach to challenge the Oracle Trilemma, eg: [Komodo Trustless Oracles](https://komodoplatform.com/en/blog/the-promise-of-smart-contracts-and-the-oracle-problem/).
 
@@ -22,21 +22,28 @@ Though, blockchain can't solve it's own trilemma.
 As an utilization of Cerberus Concensus Model, NeuRacle will have some similar design, for short:
 
 Data Providers ~ [Validator Nodes](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-ii).
+
 NeuRacle Ecosystem (Layer 2) ~ [Shardspace](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-ii).
+
 Lively data from an online source ~ [Shard](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-iv).
+
 1 specific data in a particular time ~ [Transaction](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-iii).
+
 Validated Data ~ [Reaching Consensus](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-v).
+
 Sybil Resistance by PoS = [Sybil Resistance by PoS](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-vii).
+
 Users = Users.
+
 Components = Components.
 
-## Quick Start:
+## Quick Start
 
 ## System Explaination
 
 For a simple showcase, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting.
 
-### NeuRacle ecosystem's entities:
+### NeuRacle ecosystem's entities
 
 There are 3 mains entites in NeuRacle ecosystem: **Users**, **Validators** and **NeuRacle Gateway**.
 
@@ -66,7 +73,7 @@ This won't just stay on crypto world, on real world too, different address, loca
 
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
 
-### Data refreshing round.
+### Data refreshing round
 
 Anyone can choose a validator to stake, receive reward based on that validator contribution to the network. The Sybil Resistance mechanism worked the same as Radix Network.
 
@@ -90,14 +97,24 @@ Round concluded requirement is >2/3 active validators.
 
 Datas with >2/3 staked weight of that round will also be validated.
 
-## What bad things won't happend on NeuRacle?
+## Security, Utility
+
+### What bad things won't happend on NeuRacle?
 
 **Low performance Validators**: The data update will happen at the "almost same time" in every validators. Assume we have some validator with low performance that lead to a data update "slightly different", that validator will right away deemed as "untruthful" and punished. This punish and reward mechanism will ensure all validator to host and ensure the Gateway in the best performance.
 
 **Single point of failure**: The validating system is decentralized, there is no single point of failure. 
 
-## What bad things might happend on NeuRacle?
+### What bad things might happend on NeuRacle?
 
 **Security, Liveness Break**: NeuRacle has the same Sybil Resistance as Radix Network, malicious entities will need >1/3 staked value to break liveness, >2/3 staked value to really conduct a meaningful attack. Based on game-theory, that attack will really hard and costly. With sharded NeuRacle, the validator sets, as well as the data sources they may validate in the next round will all be randomized, make an attack become almost impossible.
+
+### Can NeuRacle do VRF?
+
+Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle will include a function to generate random number from a verified seed: "Unix time from NeuRacle service", "Crypto, asset price from NeuRacle service", "The middle address that update NeuRacle datas in the stream of data validation transactions done at almost the same time",... All these data are verified to have a degree of "entropy"
+
+## License 
+
+This work is licensed under MIT and Apache 2.0.
 
 *I'm still an amateur on cryptography and distributed technology, in this work there may still contain something wrong or haven't taken into account. I'm glad to have any contributor to this work.*

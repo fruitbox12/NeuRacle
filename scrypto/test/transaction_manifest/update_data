@@ -7,6 +7,6 @@ CREATE_PROOF_FROM_BUCKET
 PUSH_TO_AUTH_ZONE 
     Proof("validator_proof");
 CALL_METHOD 
-    ComponentAddress("${VALUP_ADDRESS}") "update_data" HashMap<String, String>("${API1}", "${RESULT1}", "${API2}", "${RESULT2}", "${API3}", "${RESULT3}", "${API4}", "${RESULT4}", "${API5}", "${RESULT5}");
+    ComponentAddress("${VALUP_ADDRESS}") "update_data" HashMap<String, String>(${RESULTS});
 CALL_METHOD_WITH_ALL_RESOURCES 
     ComponentAddress("${VALUP_ACC}") "deposit_batch";
