@@ -266,44 +266,6 @@ blueprint! {
             
         }
 
-        pub fn become_new_vrf_user(&mut self, mut payment: Bucket, floor_range: Decimal, ceil_range: Decimal) -> (Bucket, Bucket) {
-
-            let amount = payment.amount();
-
-            assert_resource(payment.resource_address(), self.neura, amount, self.pay_rate);
-
-            let user_id: NonFungibleId = NonFungibleId::random();
-
-            let length = (amount/self.pay_rate).floor();
-
-            self.controller_badge.authorize(|| {
-                payment.take(length * self.pay_rate).burn();
-            });
-
-            let current = Runtime::current_epoch();
-
-            let end = current + length.to_string().parse::<u64>().unwrap() * self.round_length;
-
-            let badge = self.controller_badge.authorize(|| {
-                borrow_resource_manager!(self.user_badge)
-                .mint_non_fungible(&user_id, UserData{
-                    end: end,
-                    api: api.clone()
-                })
-            });
-            
-            info!("You can access this vrf number from now until epoch {}", end);
-
-            if !self.datas.contains_key(&api) {
-
-                self.datas.insert(api.clone(), String::default());
-            
-            }
-
-            return (badge, payment)
-            
-        }
-
         pub fn refund_account(&mut self, mut identity: Bucket, mut payment: Bucket) -> (Bucket, Bucket) {
 
             let amount = payment.amount();

@@ -28,7 +28,6 @@ export RESULT4=${RESULTS[7]}
 export API5=${RESULTS[8]}
 export RESULT5=${RESULTS[9]}
 
-
 resim run ./transaction_manifest/update_data
 
 resim set-default-account $VAL2_ACC $VAL2_PIV

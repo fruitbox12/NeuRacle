@@ -7,12 +7,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router-dom": "^6.3.0",
     "pte-browser-extension-sdk": "^0.1.21",
     "pte-sdk": "^0.1.21",
-    "noty": "^3.2.0-beta-deprecated"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-toastify": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
