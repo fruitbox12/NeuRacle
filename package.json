@@ -7,7 +7,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "notiflix": "^3.2.5",
+=======
+>>>>>>> f598c65200bf71a94bc14a3577f88508294fd170
     "pte-browser-extension-sdk": "^0.1.21",
     "pte-sdk": "^0.1.21",
     "react": "^18.0.0",

@@ -21,6 +21,7 @@ logp "Punishment: 10"
 
 logy "Check doc to study about these parameters"
 
+resim run ./transaction_manifest/instantiate
 output=`resim run ./transaction_manifest/instantiate | awk '/Admin badge address: |Validator badge address: |User badge: |Neura: |Component: / {print $NF}'`
 export ADMIN_BADGE=`echo $output | cut -d " " -f1`
 export VALIDATOR_BADGE=`echo $output | cut -d " " -f2`
