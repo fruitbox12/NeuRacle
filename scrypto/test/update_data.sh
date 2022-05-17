@@ -11,26 +11,7 @@ resim set-default-account $VAL1_ACC $VAL1_PIV
 export VALUP_ADDRESS=$VAL1_ADDRESS
 export VALUP_ACC=$VAL1_ACC
 
-<<<<<<< HEAD
 export RESULTS=`./neuracle_gateway.exe`
-=======
-text=`./neuracle_gateway.exe`
-
-IFS='!'
-
-read -a RESULTS <<< "$text"
-
-export API1=${RESULTS[0]}
-export RESULT1=${RESULTS[1]}
-export API2=${RESULTS[2]}
-export RESULT2=${RESULTS[3]}
-export API3=${RESULTS[4]}
-export RESULT3=${RESULTS[5]}
-export API4=${RESULTS[6]}
-export RESULT4=${RESULTS[7]}
-export API5=${RESULTS[8]}
-export RESULT5=${RESULTS[9]}
->>>>>>> f598c65200bf71a94bc14a3577f88508294fd170
 
 resim run ./transaction_manifest/update_data
 

@@ -7,6 +7,6 @@ CREATE_PROOF_FROM_BUCKET
 PUSH_TO_AUTH_ZONE 
     Proof("validator_proof");
 CALL_METHOD 
-    ComponentAddress("${VALUP_ADDRESS}") "update_data" HashMap<String, String>(${RESULTS});
+    ComponentAddress("${VALUP_ADDRESS}") "update_data" TreeMap<String, String>(${RESULTS});
 CALL_METHOD_WITH_ALL_RESOURCES 
     ComponentAddress("${VALUP_ACC}") "deposit_batch";
