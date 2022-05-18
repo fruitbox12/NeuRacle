@@ -1,0 +1,10 @@
+
+export const PACKAGE='018ec027fb6c0027f637c52dec41f7b5a407bb21189719f2ef91db'
+export const COMPONENT='02b28d35fdad477b6bfe6f6a3e97b3d9e9a64417b009034b7bc51a'
+export const ADMINBADGE='03d41a6deaaa2a088879433bb6b186cf1db542f7afcae3e5e8bb50'
+export const NAR='0329d6ec346a658ff6c718154be1ca80e7db1f26e8d3d029a988f3'
+export const VALIDATOR_BADGE='03803fdceae93e2f09b1e112a2c8208d3a33cb21531acaa4a268dd'
+export const USER_BADGE='03ce241ce4662c55daac25e8a35983d3ad5d50d0275f622a0598ff'
+export const STAKER_BADGE=''
+export const VALIDATOR_ADDRESS=''
+

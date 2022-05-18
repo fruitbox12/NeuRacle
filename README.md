@@ -41,11 +41,9 @@ Components = Components.
 
 ## System Explaination
 
-For a simple showcase, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting.
-
 ### NeuRacle ecosystem's entities
 
-There are 3 mains entites in NeuRacle ecosystem: **Users**, **Validators** and **NeuRacle Gateway**.
+There are 3 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **NeuRacle Gateway** and **NeuRacle Storage**.
 
 **Validators**, or Data Providers are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway.
 
@@ -61,6 +59,12 @@ After make a request, users can fetch on-chain data through NeuRacle component, 
 
 User make request for data from 1 source will have to provide NER token. The more they provide, the longer they can get validated data. All NER token used will be burn.
 
+**NeuRacle Storage** is an off-chain cloud service that do data extracting, parsing, web scraping and host those data on user demand. Those data can only be extracted by NeuRacle Gateway or the user that demanded the data for monitor purpose. The data can also be public per that user request.
+
+NeuRacle Storage exist for users that can't point to the exact data source they need or can't host the data on their own.
+
+NeruRacle Storage can also be a distributed system for more security.
+
 ### Why one source?
 
 Aggregrate data on-chain will be much more computation costly.
@@ -72,6 +76,8 @@ Eg: Bob operating a USX stable coin project and using aggregrated "XRD/USD last 
 This won't just stay on crypto world, on real world too, different address, location, seller will provide different information. USA oil price will ofc different from Russia oil price. Pork from your locally will ofc different from the farm.
 
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
+
+For a simple showcase, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting.
 
 ### Data refreshing round
 
@@ -101,7 +107,7 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 ### What bad things won't happend on NeuRacle?
 
-**Low performance Validators**: The data update will happen at the "almost same time" in every validators. Assume we have some validator with low performance that lead to a data update "slightly different", that validator will right away deemed as "untruthful" and punished. This punish and reward mechanism will ensure all validator to host and ensure the Gateway in the best performance.
+**Low performance Validators**: The data update will happen at the "almost same time" in every validators. Assume we have some validator with low performance that lead to a data update "slightly different", that validator will right away deemed as "untruthful" and punished. This punish and reward mechanism will ensure all validator to host the Gateway at the best performance.
 
 **Single point of failure**: The validating system is decentralized, there is no single point of failure. 
 

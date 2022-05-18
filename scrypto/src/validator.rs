@@ -277,7 +277,7 @@ blueprint! {
             
         }
 
-        pub fn update_data(&mut self, datas: TreeMap<String, String>) {
+        pub fn update_data(&mut self, datas: BTreeMap<String, String>) {
 
             assert!(
                 self.round_start == true,
