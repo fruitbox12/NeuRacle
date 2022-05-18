@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import { DefaultApi, ManifestBuilder } from 'pte-sdk'
-import { getAccountAddress, signTransaction } from 'pte-browser-extension-sdk'
+import { getAccountAddress, signTransaction, waitForAction } from 'pte-browser-extension-sdk'
 import Notiflix from 'notiflix'
 import { ADMINBADGE, PACKAGE, NAR, COMPONENT,  VALIDATOR_BADGE, USER_BADGE, STAKER_BADGE, VALIDATOR_ADDRESS} from './NEURACLE'
 
@@ -14,69 +14,87 @@ function App() {
   const [neura, setNeura] = useState<string>()
   const [yourRole, setYourRole] = useState<string>()
   const [memberInfo, setMemberInfo] = useState<Array<string>>()
-  const url = 'https://pte01.radixdlt.com/'
   const [showInfo, setShowInfo] = useState<string>()
+  
+  
 
   async function get_nft_data(nft, resource) {
     
 
     const nonFungibleId = nft.non_fungible_ids[0];
-    
+
+        try {
           const response = await fetch(
-          `${url}non-fungible/${resource}${nonFungibleId}`
-          );
-
-          window.prompt("here");
+            `https://pte01.radixdlt.com/non-fungible/${resource}${nonFungibleId}`
+            );
+            
+            let info: Array<string> = [];
+            const nonFungibleData = await response.json();
+            
+            const data = JSON.parse(nonFungibleData.immutable_data).fields;
+  
+            data.foreach( (x) => {
+              info.push(x.value)
+            });
+  
+            const data2 = JSON.parse(nonFungibleData.mutable_data).fields
+            data2.foreach( (x) => {
+              info.push(x.value)
+            });
+  
+            setMemberInfo(info);
+        }
+        catch {
+          get_nft_data(nft, resource)
+        }
+    
           
-          let info: Array<string> = [];
-          const nonFungibleData = await response.json();
-          
-          const data = JSON.parse(nonFungibleData.immutable_data).fields;
-
-          data.foreach( (x) => {
-            info.push(x.value)
-          });
-
-          const data2 = JSON.parse(nonFungibleData.mutable_data).fields
-          data2.foreach( (x) => {
-            info.push(x.value)
-          });
-
-          setMemberInfo(info);
 
   }
-
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
   async function data() {
-
+    
     const fetchData = async () => {
       try {
         
         setAccountAddress(await getAccountAddress());
 
-        const response = await fetch(`${url}component/${accountAddress}`);
-  
-        const component = await response.json();
-  
-        const my_resource = component.owned_resources;
-
-        if (my_resource.find((resource) => resource.resource_address === ADMINBADGE)) {
-          setYourRole("NeuRacle Admin")
-        } else if (my_resource.find((resource) => resource.resource_address === VALIDATOR_BADGE)) {
-          setYourRole("NeuRacle Validator");
-          
-          await get_nft_data(my_resource, VALIDATOR_BADGE);
-          
-          setShowInfo(`Name: "${memberInfo![0]}" | Country: "${memberInfo![1]}" | Website: "${memberInfo![2]}" | Validator Address: "${memberInfo![3]}"`);
-          
-        } else if (my_resource.find((resource) => resource.resource_address === USER_BADGE)) {
-          setYourRole("NeuRacle User")
-          await get_nft_data(my_resource, USER_BADGE);
-          setShowInfo(`Your data source: "${memberInfo![0]}" | Account can use until epoch: "${memberInfo![1]}"`)
-
+        if ((accountAddress == undefined) || (accountAddress == 'Loading...')) {
+          return
         } else {
-          setYourRole("Visitor")
+          const response = await fetch(`https://pte01.radixdlt.com/component/${accountAddress}`);
+  
+          const component = await response.json();
+    
+          const my_resource = component.owned_resources;
+  
+          const admin = my_resource.find((nft) => nft.resource_address === ADMINBADGE);
+          if (admin) {
+            setYourRole("NeuRacle Admin")
+          } 
+          const validator = my_resource.find((nft) => nft.resource_address === VALIDATOR_BADGE);
+          if (validator) {
+
+            setYourRole("NeuRacle Validator");
+            
+            await get_nft_data(validator, VALIDATOR_BADGE);
+
+            if (memberInfo == undefined) {
+              return data()
+            } else {setShowInfo(`Name: "${memberInfo![0]}" | Country: "${memberInfo![1]}" | Website: "${memberInfo![2]}" | Validator Address: "${memberInfo![3]}"`);
+          alert(showInfo)}
+          
+          } 
+          const user = my_resource.find((nft) => nft.resource_address === USER_BADGE) 
+          if (user) {
+            setYourRole("NeuRacle User")
+            await get_nft_data(user, USER_BADGE);
+            setShowInfo(`Your data source: "${memberInfo![0]}" | Account can use until epoch: "${memberInfo![1]}"`)
+          } else {
+            setYourRole("Visitor")
+          }
         }
-      } catch (error) {
+      } catch {
         fetchData()
       }
     };
@@ -96,10 +114,13 @@ function App() {
       .publishPackage(wasm)
       .build()
       .toString();
-  
+    
     const receipt = await signTransaction(manifest);
-
-    alert("You must edit the NEURACLE.tsx file with new package: " + receipt.newPackages[0])
+    Notiflix.Loading.pulse();
+    const newpack: string = receipt.newPackages[0];
+    success("Done!");
+    info("Change the value", "New package address: " + newpack + ". <br/>Please add this on NEURACLE.tsx");
+    Notiflix.Loading.remove()
   }
   async function become_admin() {
 
@@ -108,19 +129,21 @@ function App() {
       .callMethodWithAllResources(accountAddress!, 'deposit_batch')
       .build()
       .toString();
-  
+    
     const receipt = await signTransaction(manifest);
-  
+    Notiflix.Loading.pulse();
     if (receipt.status == 'Success') {
-      alert("You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file with new component: " + receipt.newComponents[0]
-       + ". New Admin Badge: " + receipt.newResources[0] 
-       + ". New Validator Badge: " + receipt.newResources[3] 
-       + ". New User Badge: " + receipt.newResources[4] 
-       + ". New Neura Resource Address: " + receipt.newResources[5]
-       + ". Please don't close this window until done!")
-    } else {
-      alert(receipt.status)
+      success("Done!");
+      info("Change the value", 'You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file with |New component: ' + receipt.newComponents[0]
+      + '. <br/>|New Admin Badge: ' + receipt.newResources[0]
+      + '. <br/>|New Validator Badge: ' + receipt.newResources[3]
+      + '. <br/>|New User Badge: ' + receipt.newResources[4]
+      + '. <br/>|New Neura Resource Address: ' + receipt.newResources[5])
     }
+    else {
+      failure_big("Failed", "Please try again: " + receipt.status)
+    }
+    Notiflix.Loading.remove()
   }
 
 
@@ -164,17 +187,19 @@ function App() {
                   .callMethodWithAllResources(accountAddress!, 'deposit_batch')
                   .build()
                   .toString();
-        
+              
               const receipt = await signTransaction(manifest);
+              Notiflix.Loading.pulse();
           
               if (receipt.status == 'Success') {
-                alert("The address you provided has been assigned as NeuRacle Validator. New Validator Address: "
+                success("Done!");
+                info("Change the value", "The address you provided has been assigned as NeuRacle Validator. New Validator Address: "
                 + receipt.newComponents[0] 
                 + ". This validator staker badge: "
                 + receipt.newResources[1]
                 + ". Please don't close this window until done!")
                     } else {
-                alert(receipt.status);
+                failure_big("Failed", "Please try again: " + receipt.status);
                     }
               }
             }
@@ -187,6 +212,11 @@ function App() {
     else {
       failure_big("Failed", "You are not NeuRacle Admin")
     }
+    Notiflix.Loading.remove()
+  }
+
+  async function stake() {
+
   }
   
   function success(message: string) {Notiflix.Notify.success(message,{
@@ -195,10 +225,16 @@ function App() {
     showOnlyTheLastOne: true
   })}
 
-  function success_big(title: string, message: string) {Notiflix.Report.success(
+  async function info(title: string, message: string) {Notiflix.Report.info(
     title,
     message,
     'Ok',
+    function(){
+    },
+    {
+      width: "1000px",
+      messageMaxLength: 1000,
+    }
     )
   }
 
@@ -237,15 +273,6 @@ function App() {
           </a> PTE to getting started.
         </p>
         <p>
-          Hello <a style={lightblue}>{yourRole}</a> with account: "<a style={lightgreen}>{accountAddress}</a>"
-        </p>
-        <p>
-        <button type="button" onClick={data}>
-            Refresh your data
-          </button>
-        </p>
-        <p></p>
-        <p>
         Check your balance through <a
             className="App-link"
             href="https://plymth.github.io/pouch/"
@@ -253,6 +280,18 @@ function App() {
             rel="noopener noreferrer"
           >Pouch</a>
         </p>
+        <p></p>
+        <div>
+          Hello <a style={lightblue}>{yourRole}</a> with account: "<a style={lightgreen}>{accountAddress}</a>"
+        </div>
+        <p>
+        <button type="button" onClick={() => {setAccountAddress('Loading...'), setYourRole('Loading...'), setShowInfo('Loading...')}}>
+            Refresh your data
+          </button>
+        </p>
+        <div>
+          {showInfo}
+        </div>
         <p>
         <button type="button" onClick={publish_package}>
             Publish package
@@ -261,12 +300,6 @@ function App() {
           </button> | <button type="button" onClick={assign_validators}>
             Assign a validator
           </button>
-        <p>
-        </p>
-        <p>
-        </p>
-        <p>
-        </p>
         </p>
       </header>
     </div>
