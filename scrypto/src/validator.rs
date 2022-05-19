@@ -163,7 +163,7 @@ blueprint! {
  
                 data.unstaked += data.unstaking;
                 data.unstaking = Decimal::zero();
-                data.end = current;
+                data.end = 0;
             
             }
 
@@ -218,7 +218,7 @@ blueprint! {
  
                 data.unstaked += data.unstaking;
                 data.unstaking = Decimal::zero();
-                data.end = current;
+                data.end = 0;
                 
             }
 
@@ -234,7 +234,7 @@ blueprint! {
             self.staked_vault.put(self.unstake_vault.take(data.unstaking));
 
             data.unstaking = Decimal::zero();
-            data.end = current;
+            data.end = 0;
 
             self.controller_badge
                 .authorize(|| identity.non_fungible().update_data(data));
@@ -256,7 +256,7 @@ blueprint! {
  
                 data.unstaked += data.unstaking;
                 data.unstaking = Decimal::zero();
-                data.end = current;
+                data.end = 0;
 
             }
 

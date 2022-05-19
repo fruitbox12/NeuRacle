@@ -8,68 +8,148 @@ import { TESTER, ADMINBADGE, PACKAGE, NAR, COMPONENT, VALIDATOR_BADGE, USER_BADG
 
 
 function App() {
-  const [accountAddress, setAccountAddress] = useState<string>()
+  const [accountAddress, setAccountAddress] = useState<string>('')
   const lightgreen = { color: 'lightgreen' }
   const lightblue = { color: 'lightblue' }
-  const [yourRole, setYourRole] = useState<string>()
-  const [memberInfo, setMemberInfo] = useState<Array<string>>()
-  const [tokenInfo, setTokenInfo] = useState<string>()
-  const [stakerInfo, setStakerInfo] = useState<Array<Array<string>>>()
+  const [yourRole, setYourRole] = useState<string>("Visitor")
+  const [memberInfo, setMemberInfo] = useState<Array<string>>([])
+  const [tokenInfo, setTokenInfo] = useState<string>('')
+  const [validator, setValidator] = useState<string>('')
+  const [showStaker, setShowStaker] = useState<boolean>(false)
+  const [stakerInfo, setStakerInfo] = useState<Array<string>>([])
+  const [stakerBadge, setStakerBadge] = useState<string>('')
+  const [refresh, setRefresh] = useState<boolean>(false)
+
 
   function Show_each_staked_info(): JSX.Element {
-    if (stakerInfo == undefined) {
+    if (!stakerInfo.length) {
       return <div>
-        You haven't staked in any validator
+        You haven't staked in this validator
       </div>
     }
     else {
-      const list = stakerInfo.map((x) => {
-        return (<li key={x[0].toString()}><div style={{ border: '3px solid cyan' }}><br />
-          Validator Name: {x[1]}
+        return (<div style={{ border: '3px solid cyan' }}><br />
+          Validator Name: {stakerInfo[1]}
           <br /><br />
-          Current staked: {x[5] + " NAR"}
+          Current staked: {stakerInfo[5] + " NAR"}
           <br /><br />
-          Current unstaking: {x[2].replace(/^\D+|\D+$/g, "")}
+          Current unstaking: {stakerInfo[2].replace(/^\D+|\D+$/g, "")}
           <br /><br />
-          Estimated unstaking done in epoch: {x[3]}
+          Estimated unstaking done in epoch: {stakerInfo[3]}
           <br /><br />
-          Avaiable for withdraw: {x[4].replace(/^\D+|\D+$/g, "")}
-          <br /><br /></div></li>)
-      });
-      return (
-        <div><br />
-          {list}
-        </div>
-      )
+          Avaiable for withdraw: {stakerInfo[4].replace(/^\D+|\D+$/g, "")}
+          <br /><br /></div>)
+    }
+  }
+
+  function Show_stake_info() {
+    if (showStaker == false) {
+      return <div><button type="button" onClick={async function () {
+
+        const Valid = prompt("Validator Address");
+
+        if (Valid == null) {return}
+        else {
+          Notiflix.Loading.pulse();
+          const response = await fetch(
+
+            `https://pte01.radixdlt.com/component/${COMPONENT}`
+
+          )
+
+          const parseData = await response.json()
+
+          const parseValidatorAddress = JSON.parse(parseData.state).fields[3].elements
+
+          const result = parseValidatorAddress.find((x: { elements: { value: string }[] }): boolean => x.elements[0].value === `ComponentAddress(\"${Valid}\")`)
+
+          if (!result) {
+            failure("Wrong validator address.")
+          }
+          else {
+            
+            success("Success!")
+
+            const response2 = await fetch(`https://pte01.radixdlt.com/component/${Valid}`);
+
+            const parseData = await response2.json();
+
+            const parseStakerBadge = JSON.parse(parseData.state).fields[7].value;
+
+            const my_badge: string = parseStakerBadge.substring(
+              parseStakerBadge.indexOf('"') + 1, 
+              parseStakerBadge.lastIndexOf('"')
+            );
+
+            setValidator(Valid!)
+            setStakerBadge(my_badge)
+            setShowStaker(true)
+          }
+          Notiflix.Loading.remove();
+        }
+      }}>
+      Show staked amount
+    </button></div>
+    }
+    else {
+      return <div><button type="button" onClick={function () {
+        setShowStaker(false);
+        return 
+      }}>
+      Hide staked amount
+    </button><br/><br/>
+      <Stake_button /> | <button type="button" onClick={unstake}>
+        Unstake
+      </button> | <button type="button" onClick={stop_unstake}>
+        Stop Unstake
+      </button> | <button type="button" onClick={withdraw}>
+        Withdraw
+      </button>
+      <br /><br />
+      <Show_each_staked_info />
+      <br /><br />
+      </div>
+    }
+  }
+
+  function Stake_button() {
+    if (!stakerInfo.length) {
+      return <button type="button" onClick={stake}>
+      Stake
+    </button>
+    }
+    else {
+      return <button type="button" onClick={addstake}>
+      Add Stake
+    </button>
     }
   }
 
   function Show_info() {
-    if (memberInfo == undefined) return null
+    if (!memberInfo.length) return null
     if (yourRole == "NeuRacle Validator") {
-      return <div style={{ border: '3px solid lightgreen' }}>
-        Name: {memberInfo![0]} <br /> Country: {memberInfo![1]} <br /> Website: {memberInfo![2]} <br /> Address: {memberInfo![3]}
-      </div>
+      return <div><div style={{ border: '3px solid lightgreen'}}>
+        Name: {memberInfo![0]} <br /> Country: {memberInfo![1]} <br /> Website: {memberInfo![2]} <br /> Address: {memberInfo![3]} 
+      </div><br/></div>
     }
     else if (yourRole == "NeuRacle User") {
-      return <div style={{ border: '3px solid lightblue' }}>
+      return <div><div style={{ border: '3px solid lightblue' }}>
         Your data source: {memberInfo![0]} <br /> This account have access until epoch {memberInfo![1]}
-      </div>
+      </div><br/></div>
     }
     else return null
   }
 
   function Role_button() {
-    if (yourRole == undefined) { return <div> Loading... </div> }
-    else if (yourRole == 'NeuRacle Admin') {
-      return <div>
+    if (yourRole == 'NeuRacle Admin') {
+      return <div><br/>
         <button type="button" onClick={assign_validators}>
           Assign a validator
         </button>
       </div>
     }
     else if (yourRole == 'NeuRacle Validator') {
-      return <div>
+      return <div><br/>
         <button type="button" onClick={function () { }}>
           Change fee
         </button> | <button type="button" onClick={function () { }}>
@@ -78,14 +158,14 @@ function App() {
       </div>
     }
     else if (yourRole == 'NeuRacle User') {
-      return <div>
+      return <div><br/>
         <button type="button" onClick={function () { }}>
           Show your data:
         </button>
       </div>
     }
     else if (yourRole == 'TESTER') {
-      return <div><button type="button" onClick={publish_package}>
+      return <div><br/><button type="button" onClick={publish_package}>
         Publish package
       </button> | <button type="button" onClick={become_admin}>
           Become NeuRacle Admin
@@ -94,20 +174,16 @@ function App() {
     else return null
   }
 
-  function Visitor_button() {
-    if (tokenInfo == undefined) { return <div> Loading... </div> }
+  function Visitor_info() {
+    if (tokenInfo == '') { return <div> Loading... </div> }
     return <div style={{ textAlign: "center" }}>
       Current NAR on your wallet: {tokenInfo}
       <br /><br />
-      <button type="button" onClick={stake}>
-        Stake
-      </button> | <button type="button" onClick={function () { }}>
-        Unstake
-      </button> | <button type="button" onClick={function () { }}>
-        Stop Unstake
-      </button> | <button type="button" onClick={function () { }}>
-        Withdraw
+      <button type="button" onClick={become_user}>
+        Become User
       </button>
+      <br /><br />
+      <Show_stake_info />
       <br /><br />
     </div>
   }
@@ -142,7 +218,7 @@ function App() {
 
         setAccountAddress(await getAccountAddress())
 
-        if ((accountAddress == undefined) || (accountAddress == 'Loading...')) {
+        if (accountAddress == '') {
           return
         } else {
           const response = await fetch(`https://pte01.radixdlt.com/component/${accountAddress}`)
@@ -159,13 +235,13 @@ function App() {
             setTokenInfo(token_nar.amount)
           } else { setTokenInfo('0')} ;
 
-          const admin = my_resource.find((resource: { resource_address: string; non_fungible_ids: string[]} ) => {
+          const admin = my_resource.find((resource: { resource_address: string} ) => {
             return resource.resource_address === ADMINBADGE
           })
-          const validator = my_resource.find((resource: { resource_address: string; non_fungible_ids: string[]} ) => {
+          const validator = my_resource.find((resource: { resource_address: string} ) => {
             return resource.resource_address === VALIDATOR_BADGE
           })
-          const user = my_resource.find((resource: { resource_address: string; non_fungible_ids: string[]} ) => {
+          const user = my_resource.find((resource: { resource_address: string} ) => {
             return resource.resource_address === USER_BADGE
           })
           if (admin) {
@@ -181,6 +257,7 @@ function App() {
           }
 
           else if (user) {
+
             setYourRole("NeuRacle User")
             setMemberInfo(await get_nft_data(user.non_fungible_ids[0], USER_BADGE))
      
@@ -189,47 +266,50 @@ function App() {
             setYourRole("TESTER")
           } else { setYourRole("Visitor")} 
 
-          const staker = await my_resource.filter((resource: { name: string} ) => resource.name === "NeuRacle staker Badge")
+          if (stakerBadge !== undefined) {
 
-          if (staker.length) {
-
-            const staker_infos: string[][] = []
-
-            staker.forEach(async (x: { resource_address?: any; non_fungible_ids?: string[]} ) => {
-              const staker_info_same_address = await get_nft_data(x.non_fungible_ids![0], x.resource_address)
-              var total_amount: number = 0;
-              x.non_fungible_ids?.forEach(async (y) => {
-                const response = await fetch(
-                  `https://pte01.radixdlt.com/component/${staker_info_same_address[0]}`
-                )
-                const parseData = await response.json()
-                const parseNonFungibleId = JSON.parse(parseData.state).fields[0].elements
-                const idx = parseNonFungibleId.findIndex((nonfgb: { value: string} ) => {
-                  return nonfgb.value === `NonFungibleId("${y}")`
-                })
-                const staked_amount: number = parseFloat(parseNonFungibleId[idx + 1].value.replace(/^\D+|\D+$/g, ""));
-                total_amount = total_amount + staked_amount
-              }
-              )
-              staker_info_same_address.push('' + total_amount);
-              staker_infos.push(staker_info_same_address);
-              console.log("response>>>>>>>>>>", staker_infos);
+            const staker = my_resource.find((resource: { resource_address: string} ) => {
+              return resource.resource_address === stakerBadge
             })
-            setStakerInfo(staker_infos)
-          } else {
-            setStakerInfo(undefined)
-          }
 
+            if (staker) {
+
+              const staker_info = await get_nft_data(staker.non_fungible_ids[0], stakerBadge);
+
+              const response = await fetch(
+
+                `https://pte01.radixdlt.com/component/${staker_info[0]}`
+  
+              )
+  
+              const parseData = await response.json()
+  
+              const parseNonFungibleId = JSON.parse(parseData.state).fields[0].elements
+  
+              const idx = parseNonFungibleId.findIndex((nonfgb: { value: string} ) => {
+  
+                return nonfgb.value === `NonFungibleId("${staker.non_fungible_ids[0]}")`
+  
+              })
+  
+              const staked_amount = parseNonFungibleId[idx + 1].value.replace(/^\D+|\D+$/g, "");
+
+              staker_info.push(staked_amount)
+  
+              setStakerInfo(staker_info)
+
+            } else {
+              setStakerInfo([])
+            }
+          } 
         }
       } catch {
         fetchData()
       }
     }
-
     Notiflix.Loading.pulse();
     fetchData();
-    Notiflix.Loading.remove()
-
+    Notiflix.Loading.remove();
   }
 
   async function publish_package() {
@@ -243,11 +323,12 @@ function App() {
       .toString();
 
     const receipt = await signTransaction(manifest);
-    Notiflix.Loading.pulse();
+  
     const newpack: string = receipt.newPackages[0];
     success("Done!");
-    info("Change the value", "New package address: " + newpack + ". <br/>Please add this on NEURACLE.tsx");
-    Notiflix.Loading.remove()
+    info("Change the value", "New package address: " + newpack + ". Please add this on NEURACLE.tsx");
+    setRefresh(true);
+    
   }
   async function become_admin() {
 
@@ -258,19 +339,16 @@ function App() {
       .toString();
 
     const receipt = await signTransaction(manifest);
-    Notiflix.Loading.pulse();
+ 
     if (receipt.status == 'Success') {
       success("Done!");
-      info("Change the value", 'You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file with    |New component: ' + receipt.newComponents[0]
-        + '.   |New Admin Badge: ' + receipt.newResources[0]
-        + '.   |New Validator Badge: ' + receipt.newResources[3]
-        + '.   |New User Badge: ' + receipt.newResources[4]
-        + '.   |New Neura Resource Address: ' + receipt.newResources[5])
+      info("Change the value", 'You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file. ' + receipt.logs.toString())
     }
     else {
-      failure_big("Failed", "Please try again: " + receipt.status)
+      failure_big("Failed", "Please try again: " + receipt.logs.toString())
     }
-    Notiflix.Loading.remove()
+    setRefresh(true);
+   
   }
 
 
@@ -316,7 +394,6 @@ function App() {
                   .toString();
 
                 const receipt = await signTransaction(manifest);
-                Notiflix.Loading.pulse();
 
                 if (receipt.status == 'Success') {
                   success_big("Done!", "The address you provided has been assigned as NeuRacle Validator.");
@@ -332,132 +409,168 @@ function App() {
     else {
       failure_big("Failed", "You are not NeuRacle Admin")
     }
-    Notiflix.Loading.remove()
+    setRefresh(true);
   }
+
+  async function become_user() {
+    const result = prompt("Your data source")
+    if (result !== null) {
+      const result2 = prompt("Payment amount")
+      if (result2 !== null) {
+        const amount = parseFloat(result2)
+        if (parseFloat(tokenInfo) < amount) {
+          failure("Not enough token in wallet!")
+          return
+        } else {
+          const manifest = new ManifestBuilder()
+          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
+          .takeFromWorktop(NAR, 'bucket')
+          .callMethod(COMPONENT, 'become_new_user', [`Bucket("bucket") "${result}"`])
+          .callMethodWithAllResources(accountAddress!, 'deposit_batch')
+          .build()
+          .toString();
+
+        const receipt = await signTransaction(manifest);
+
+        if (receipt.status == 'Success') {
+          success_big("Done!", '' + receipt.logs.toString());
+        } else {
+          failure_big("Failed", '' + receipt.logs.toString());
+        }
+        setRefresh(true)
+        }
+        
+      }
+      return
+    }
+    return
+  } 
 
   async function stake() {
-    const result = prompt("Validator Address");
-    if (result == null) {
-      return
-    } else {
-      const validator_address: string = result;
-      const result2 = prompt("How much NAR want to stake to this validator?");
-      if (result2 == null) {
+      const result = prompt("How much NAR want to stake to this validator?");
+      if (result == null) {
         return
       } else {
-        const amount: number = parseFloat(result2);
+        const amount: number = parseFloat(result);
         const manifest = new ManifestBuilder()
           .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
           .takeFromWorktop(NAR, 'bucket')
-          .callMethod(validator_address, 'stake', ['Bucket("bucket")'])
+          .callMethod(validator!, 'stake', ['Bucket("bucket")'])
           .callMethodWithAllResources(accountAddress!, 'deposit_batch')
           .build()
           .toString();
 
         const receipt = await signTransaction(manifest);
-        Notiflix.Loading.pulse();
 
         if (receipt.status == 'Success') {
-          success_big("Done!", "You have staked " + amount + " NAR into validator address " + validator_address);
+          success_big("Done!", '' + receipt.logs.toString());
         } else {
-          failure_big("Failed", "Please try again: " + receipt.status);
+          failure_big("Failed", '' + receipt.logs.toString());
         }
+        setRefresh(true)
       }
-      Notiflix.Loading.remove()
-    }
   }
-  async function un_stake() {
-    const result = prompt("Validator Address");
-    if (result == null) {
-      return
-    } else {
-      const validator_address: string = result;
-      const result2 = prompt("How much NAR want to unstake from this validator?");
-      if (result2 == null) {
+
+  async function addstake() {
+    const result = prompt("How much NAR want to add stake to this validator?");
+      if (result == null) {
         return
       } else {
-        const amount: number = parseFloat(result2);
+        const amount: number = parseFloat(result);
         const manifest = new ManifestBuilder()
-          .withdrawFromAccountByAmount(accountAddress!, 1, NAR)
+          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
           .takeFromWorktop(NAR, 'bucket')
-          .callMethod(validator_address, 'stake', ['Bucket("bucket")'])
+          .withdrawFromAccountByAmount(accountAddress!, 1, stakerBadge!)
+          .takeFromWorktop(stakerBadge!, 'bucket1')
+          .callMethod(validator!, 'add_stake', ['Bucket("bucket") Bucket("bucket1")'])
           .callMethodWithAllResources(accountAddress!, 'deposit_batch')
           .build()
           .toString();
 
         const receipt = await signTransaction(manifest);
-        Notiflix.Loading.pulse();
 
         if (receipt.status == 'Success') {
-          success_big("Done!", "You have staked " + amount + " NAR into validator address " + validator_address);
+          success_big("Done!", '' + receipt.logs.toString());
         } else {
-          failure_big("Failed", "Please try again: " + receipt.status);
+          failure_big("Failed", "Please try again: " + receipt.logs.toString());
         }
+        setRefresh(true)
       }
-      Notiflix.Loading.remove()
-    }
   }
+
+  async function unstake() {
+      const result = prompt("How much NAR want to unstake from this validator?");
+      if (result == null) {
+        return
+      } else {
+        const amount: number = parseFloat(result);
+        if (parseFloat(stakerInfo![5]) < amount){
+          failure("You don't have enough NAR staked.")
+        } else {
+
+          const manifest = new ManifestBuilder()
+          .withdrawFromAccountByAmount(accountAddress!, 1, stakerBadge!)
+          .takeFromWorktop(stakerBadge!, 'bucket1')
+          .callMethod(validator!, 'unstake', [`Decimal("${amount}") Bucket("bucket1")`])
+          .callMethodWithAllResources(accountAddress!, 'deposit_batch')
+          .build()
+          .toString();
+
+        const receipt = await signTransaction(manifest);
+
+        if (receipt.status == 'Success') {
+          success_big("Done!", '' + receipt.logs.toString());
+        } else {
+          failure_big("Failed", "Please try again: " + receipt.logs.toString());
+        }
+        }
+        setRefresh(true)
+      }
+  }
+
   async function stop_unstake() {
-    const result = prompt("Validator Address");
-    if (result == null) {
-      return
-    } else {
-      const validator_address: string = result;
-      const result2 = prompt("How much NAR want to stake to this validator?");
-      if (result2 == null) {
-        return
-      } else {
-        const amount: number = parseFloat(result2);
+
         const manifest = new ManifestBuilder()
-          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
-          .takeFromWorktop(NAR, 'bucket')
-          .callMethod(validator_address, 'stake', ['Bucket("bucket")'])
-          .callMethodWithAllResources(accountAddress!, 'deposit_batch')
-          .build()
-          .toString();
+        .withdrawFromAccountByAmount(accountAddress!, 1, stakerBadge!)
+        .takeFromWorktop(stakerBadge!, 'bucket1')
+        .callMethod(validator!, 'stop_unstake', [`Bucket("bucket1")`])
+        .callMethodWithAllResources(accountAddress!, 'deposit_batch')
+        .build()
+        .toString();
 
         const receipt = await signTransaction(manifest);
-        Notiflix.Loading.pulse();
 
         if (receipt.status == 'Success') {
-          success_big("Done!", "You have staked " + amount + " NAR into validator address " + validator_address);
+          success_big("Done!", '' + receipt.logs.toString());
         } else {
-          failure_big("Failed", "Please try again: " + receipt.status);
+          failure_big("Failed", "Please try again: " + receipt.logs.toString());
         }
-      }
-      Notiflix.Loading.remove()
-    }
+        setRefresh(true)
   }
+
   async function withdraw() {
-    const result = prompt("Validator Address");
-    if (result == null) {
-      return
-    } else {
-      const validator_address: string = result;
-      const result2 = prompt("How much NAR want to stake to this validator?");
-      if (result2 == null) {
+      const result = prompt("How much NAR want to withdraw from this validator?");
+      if (result == null) {
         return
       } else {
-        const amount: number = parseFloat(result2);
+        const amount: number = parseFloat(result);
         const manifest = new ManifestBuilder()
-          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
-          .takeFromWorktop(NAR, 'bucket')
-          .callMethod(validator_address, 'stake', ['Bucket("bucket")'])
-          .callMethodWithAllResources(accountAddress!, 'deposit_batch')
-          .build()
-          .toString();
+        .withdrawFromAccountByAmount(accountAddress!, 1, stakerBadge!)
+        .takeFromWorktop(stakerBadge!, 'bucket1')
+        .callMethod(validator!, 'withdraw', [`Decimal("${amount}") Bucket("bucket1")`])
+        .callMethodWithAllResources(accountAddress!, 'deposit_batch')
+        .build()
+        .toString();
 
         const receipt = await signTransaction(manifest);
-        Notiflix.Loading.pulse();
 
         if (receipt.status == 'Success') {
-          success_big("Done!", "You have staked " + amount + " NAR into validator address " + validator_address);
+          success_big("Done!", '' + receipt.logs.toString());
         } else {
-          failure_big("Failed", "Please try again: " + receipt.status);
+          failure_big("Failed", "Please try again: " + receipt.logs.toString());
         }
+        setRefresh(true) 
       }
-      Notiflix.Loading.remove()
-    }
   }
 
   function success_big(title: string, message: string) {
@@ -476,7 +589,7 @@ function App() {
     })
   }
 
-  async function info(title: string, message: string) {
+  function info(title: string, message: string) {
     Notiflix.Report.info(
       title,
       message,
@@ -508,9 +621,12 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => {
-       data()
+      setRefresh(false);
+      
+       data();
+
       }, 100);
-  }, [accountAddress, yourRole, stakerInfo]);
+  }, [accountAddress, yourRole, showStaker, refresh]);
 
   return (
     <div className="App">
@@ -541,17 +657,15 @@ function App() {
         <div >
           <Show_info />
         </div>
-        <br />
-        <button type="button" onClick={() => { setAccountAddress('Loading...'), setYourRole('Loading...'), setMemberInfo(undefined), setTokenInfo(undefined) }}>
+        <button type="button" onClick={() => { setRefresh(true)}}>
           Refresh your data
         </button>
-        <br />
         <div>
           <Role_button />
         </div>
         <br />
-        <Visitor_button />
-      <Show_each_staked_info />
+        <Visitor_info />
+      <p></p><p></p>
       </header>
     </div>
   )
