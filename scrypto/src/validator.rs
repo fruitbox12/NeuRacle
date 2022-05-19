@@ -3,6 +3,8 @@ use crate::utilities::*;
 
 #[derive(NonFungibleData)]
 pub struct Staker {
+    pub address: String,
+    pub validator_name: String,
     #[scrypto(mutable)]
     pub unstaking: Decimal,
     #[scrypto(mutable)]
@@ -43,7 +45,7 @@ blueprint! {
                 .initial_supply(dec!("1"));
 
             let staker_badge = ResourceBuilder::new_non_fungible()
-                .metadata("name", "staker Badge")
+                .metadata("name", "NeuRacle staker Badge")
                 .mintable(rule!(require(controller_badge.resource_address())), LOCKED)
                 .burnable(rule!(require(controller_badge.resource_address())), LOCKED)
                 .updateable_non_fungible_data(rule!(require(controller_badge.resource_address())), LOCKED)
@@ -82,6 +84,7 @@ blueprint! {
             info!("{} Validator Address: {}", name.clone(), component);
             info!("{} Staker Badge: {}", name, staker_badge);
             return component
+            
         }
 
         pub fn stake(&mut self, bucket: Bucket) -> Bucket {
@@ -90,9 +93,13 @@ blueprint! {
 
             let user_id: NonFungibleId = NonFungibleId::random();
 
+            let validator: String = Runtime::actor().component_address().unwrap().to_string();
+
             let badge = self.controller_badge.authorize(|| {
                 borrow_resource_manager!(self.staker_badge)
                 .mint_non_fungible(&user_id, Staker{
+                    address: validator,
+                    validator_name: self.name.clone(),
                     unstaking: Decimal::zero(),
                     end: 0,
                     unstaked: Decimal::zero()
@@ -157,12 +164,8 @@ blueprint! {
                 data.unstaked += data.unstaking;
                 data.unstaking = Decimal::zero();
                 data.end = current;
-                self.controller_badge
-                .authorize(|| identity.non_fungible().update_data(data));
-
+            
             }
-
-            let mut data: Staker = identity.non_fungible().data();
 
             assert!(
                 data.unstaking == Decimal::zero(),
@@ -180,7 +183,6 @@ blueprint! {
 
             let end = current + self.unstake_delay;
             
-
             data.unstaking = amount;
             data.end = end;
 
@@ -217,12 +219,8 @@ blueprint! {
                 data.unstaked += data.unstaking;
                 data.unstaking = Decimal::zero();
                 data.end = current;
-                self.controller_badge
-                .authorize(|| identity.non_fungible().update_data(data));
-
+                
             }
-
-            let mut data: Staker = identity.non_fungible().data();
 
             assert!(
                 data.unstaking != Decimal::zero(),
@@ -259,17 +257,18 @@ blueprint! {
                 data.unstaked += data.unstaking;
                 data.unstaking = Decimal::zero();
                 data.end = current;
-                self.controller_badge
-                .authorize(|| identity.non_fungible().update_data(data));
 
             }
-            
-            let data: Staker = identity.non_fungible().data();
 
             assert!(
                 amount <= data.unstaked,
                 "Not enough unstaked amount for withdrawal"
             );
+
+            data.unstaked -= amount;
+
+            self.controller_badge
+                .authorize(|| identity.non_fungible().update_data(data));
 
             info!("You have withdrawed {} NAR token.", amount);
 
