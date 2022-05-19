@@ -207,16 +207,15 @@ function App() {
                 const idx = parseNonFungibleId.findIndex((nonfgb: { value: string} ) => {
                   return nonfgb.value === `NonFungibleId("${y}")`
                 })
-                const staked_amount: number = parseNonFungibleId[idx + 1].value.replace(/^\D+|\D+$/g, "");
-                total_amount = total_amount + staked_amount;
-                console.log("response>>>>>>>>>>", total_amount);
+                const staked_amount: number = parseFloat(parseNonFungibleId[idx + 1].value.replace(/^\D+|\D+$/g, ""));
+                total_amount = total_amount + staked_amount
               }
               )
               staker_info_same_address.push('' + total_amount);
-              staker_infos.push(staker_info_same_address)
+              staker_infos.push(staker_info_same_address);
+              console.log("response>>>>>>>>>>", staker_infos);
             })
             setStakerInfo(staker_infos)
-        
           } else {
             setStakerInfo(undefined)
           }
