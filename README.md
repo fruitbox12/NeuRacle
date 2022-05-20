@@ -7,11 +7,11 @@ NeuRacle is a PoS Layer 2 solution built on Radix Ledger that provide decentrali
 
 ## Oracle Trilemma
 
-Most traditional Oracle recent day come to the same [problem](https://encyclopedia.pub/entry/2959), that have to either compromised on trustless (using trusted identities to bring data on-chain, eg: [ChainLink](https://james-sangalli.medium.com/why-chainlink-is-not-the-oracle-of-the-future-8bb859a81947#:~:text=ChainLink%20does%20not%20have%20a,centralised%20verification%20and%20dispute%20resolution.), finality (like using optimistic oracle, bet to bring data on-chain, eg: [UMA](https://umaproject.org/products/optimistic-oracle)), or security. It's almost the same as the [blockchain trilemma](https://www.ledger.com/academy/what-is-the-blockchain-trilemma).
+Most traditional Oracle recent day come to the same [problems](https://encyclopedia.pub/entry/2959), that have to either compromised on decentralization (using trusted identities to bring data on-chain, eg: [ChainLink](https://james-sangalli.medium.com/why-chainlink-is-not-the-oracle-of-the-future-8bb859a81947#:~:text=ChainLink%20does%20not%20have%20a,centralised%20verification%20and%20dispute%20resolution.)), finality (like using optimistic oracle, bet to bring data on-chain, eg: [UMA](https://umaproject.org/products/optimistic-oracle)), or security. It's almost the same as the [blockchain trilemma](https://www.ledger.com/academy/what-is-the-blockchain-trilemma).
 
 ## From Oracle to Distributed Ledger Technology
 
-Because the Oracle trilemma is almost the same as blockchain trilemma, choose a blockchain solution as an [oracle solution](https://medium.com/@jameslee777/decentralized-trustless-oracles-dto-by-piggybacking-on-timestamp-consensus-rules-2adce34d67b6) will be an innovated approach. There already some successful Oracle that are using this approach to challenge the Oracle Trilemma, eg: [Komodo Trustless Oracles](https://komodoplatform.com/en/blog/the-promise-of-smart-contracts-and-the-oracle-problem/).
+Because the Oracle trilemma is almost the same as blockchain trilemma, [choose a blockchain solution as an oracle solution](https://medium.com/@jameslee777/decentralized-trustless-oracles-dto-by-piggybacking-on-timestamp-consensus-rules-2adce34d67b6) will be an innovated approach. There already some successful Oracle that are using this approach to challenge the Oracle Trilemma, eg: [Komodo Trustless Oracles](https://komodoplatform.com/en/blog/the-promise-of-smart-contracts-and-the-oracle-problem/).
 
 Though, blockchain can't solve it's own trilemma.
 
@@ -47,7 +47,7 @@ There are 3 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **Ne
 
 **Validators**, or Data Providers are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway.
 
-**NeuRacle Gateway** is an **off-chain entity** that will play role as a medium to automatically fetch data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf. To further prevent exploit, the key (or badge) will be provided to the Validator Local Gateway instead of the Validator himself. Change fee rate, collect validator fee also have to executed through NeuRacle Gateway.
+**NeuRacle Gateway** is a **decentralized off-chain entity** that will play role as a medium to automatically fetch data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf. To further prevent exploit, the key (or badge) will be provided to the Validator Local Gateway instead of the Validator himself. Change fee rate, collect validator fee also have to executed through NeuRacle Gateway.
 
 NeuRacle will let users to choose data from any online source they want from, they can also choose on-chain aggregrated data but that will ofc more costly.
 
@@ -71,13 +71,17 @@ Aggregrate data on-chain will be much more computation costly.
 
 Moreover, not every users will want aggregrated data.
 
-Eg: Bob operating a USX stable coin project and using aggregrated "XRD/USD last price" data feed to the system, let user exchange XRD/USX on the feeded data. However, most of the time, there is 1 particular exchange that have it's XRD/USD price lower than the aggregrated data, and unfortunately most of your user use that exchange, so they complain about the data's authenticity. Now Bob have to use that exchange source data instead.
+Eg: Bob operating a USX stable coin project and using aggregrated "XRD/USD last price" data feed to the system, let user exchange XRD/USX on the feeded data. However, most of the time, there is 1 particular exchange that have it's XRD/USD price lower than the aggregrated data, and unfortunately most of Bob's user use that exchange, so they complain about the data's authenticity. Now Bob have to use that exchange data source instead.
 
 This won't just stay on crypto world, on real world too, different address, location, seller will provide different information. USA oil price will ofc different from Russia oil price. Pork from your locally will ofc different from the farm.
 
+Providers, sellers can also use NeuRacle service to feed their product's price data on-chain and sell NFT proof of owning the product on DeFi market when they **don't even need to know about their buyer**. The product can be any thing like real estate, gold, diamond, or even daily grocery,.. 
+
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
 
-Providers, sellers can also use NeuRacle service to feed their product's price data on-chain and sell NFT proof of owning the product on DeFi market when they **don't even need to know about their buyer**. The product can be any thing like real estate, gold, diamond, or even daily grocery,.. 
+## Why don't just use those off-chain decentralized data.
+
+To feed any off-chain data, the oracle still need to rely on "a trusted bridge" or "a trusted medium", lead to a single point of failure, eg: [Ronin bridge](https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack). However, NeuRacle use a large set of validators to ensure decentralized, trustless data feeding.
 
 For a simple showcase, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting.
 
@@ -87,11 +91,11 @@ Anyone can choose a validator to stake, receive reward based on that validator c
 
 After every round, data will be refreshed, NAR token will also be minted to reward (or burned to punish) validators.
 
-The round call and call-off will run by first-come-first-serve mechanism. The individual call (or call-off) a round will receive a reasonable reward. This incentive is to ensure that data valitation round will happen and concluded right after they passed requirement.
+The round call and call-off will run by a racing condition. The individual call (or call-off) a round will receive a reasonable reward. This incentive is to ensure that data valitation round will happen and concluded right after they passed requirement.
 
 Round call requirement is the round-length limited time.
 
-Time unit of on-chain NeuRacle is transactions history or epoch length.
+Current time unit of on-chain NeuRacle is transactions history or epoch length.
 
 Round length is the limited time between each data validation round. Data can be validated every 10tx, 100tx or 1epoch,...
 
@@ -109,20 +113,26 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 ### What bad things won't happend on NeuRacle?
 
-**Low performance Validators**: The data update will happen at the "almost same time" in every validators. Assume we have some validator with low performance that lead to a data update "slightly different", that validator will right away deemed as "untruthful" and punished. This punish and reward mechanism will ensure all validator to host the Gateway at the best performance.
+**Low performance Validators**: The data update will happen at the *almost same time* in every validators. Assume we have some validator with low performance that lead to a data update *slightly different*, that validator will right away deemed as *untruthful* and punished. This punish and reward mechanism will ensure all validator to host the Gateway at the best performance.
 
-**Single point of failure**: The validating system is decentralized, there is no single point of failure. 
+**Single point of failure**: The data feeding system is decentralized, there is no single point of failure. 
 
 ### What bad things might happend on NeuRacle?
 
 **Security, Liveness Break**: NeuRacle has the same Sybil Resistance as Radix Network, malicious entities will need >1/3 staked value to break liveness, >2/3 staked value to really conduct a meaningful attack. Based on game-theory, that attack will really hard and costly. With sharded NeuRacle, the validator sets, as well as the data sources they may validate in the next round will all be randomized, make an attack become almost impossible.
 
+**Single point of unstability**: As mentioned above, the stability of data stream has to be relied on the Admin's monitor, create a *Single point of unstability*. NeuRacle use an unstable time unit on-chain like transaction history or epoch, that will affect the *round-length limited time*. Since token burning, minting and data updating all happened on data feeding round, the unstable round-length might lead to an *unstable stream of data* and *unpredicted tokeneconomy*. Stablizing round-length would need to rely on Admin's monitor (Or the NeuRacle DAO in the future).
+
+Although such a bad thing might happen on NeuRacle, it wouldn't be a critical problem of an Oracle. Unstable data updating time won't affect most Oracle usecase as long as the data is frequently updated. However, the data might be delayed more than tolerance and break liveness, lead to other *critical problem* might happened on NeuRacle. (check *Congested Network*)
+
+**Congested Network**: If Radix Network ever become congested, all the DeFi system will be delayed, not only NeuRacle. User is recommended to cease on-chain activity on such an event and wait for the system to cool down.
+
 ### Can NeuRacle do VRF?
 
-Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle will include a function to generate random number from a verified seed: "Unix time from NeuRacle service", "Crypto, asset price from NeuRacle service", "The middle address that update NeuRacle datas in the stream of data validation transactions done at almost the same time",... All these data are verified to have a degree of "entropy"
+Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle will include a function to generate random number from a verified seed: "Unix time from NeuRacle service", "Crypto, asset price from NeuRacle service", "The middle address that update NeuRacle datas in the stream of data validation transactions done at almost the same time",... All these data are verified to have a degree of "entropy".
 
 ## License 
 
 This work is licensed under MIT and Apache 2.0.
 
-*I'm still an amateur on cryptography and distributed technology, in this work there may still contain something wrong or haven't taken into account. I'm glad to have any contributor to this work.*
+*I'm still an amateur on cryptography and distributed technology, this work may still contain something wrong or haven't taken into account. I'm glad to have any contributor to this work.*

@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
-import { DefaultApi, ManifestBuilder } from 'pte-sdk'
-import { getAccountAddress, signTransaction, waitForAction } from 'pte-browser-extension-sdk'
+import { ManifestBuilder } from 'pte-sdk'
+import { getAccountAddress, signTransaction} from 'pte-browser-extension-sdk'
 import Notiflix from 'notiflix'
 import { TESTER, ADMINBADGE, PACKAGE, NAR, COMPONENT, VALIDATOR_BADGE, USER_BADGE } from './NEURACLE'
+
 
 
 function App() {
@@ -12,14 +13,14 @@ function App() {
   const lightgreen = { color: 'lightgreen' }
   const lightblue = { color: 'lightblue' }
   const [yourRole, setYourRole] = useState<string>("Visitor")
-  const [memberInfo, setMemberInfo] = useState<Array<string>>([])
+  const [validatorInfo, setValidatorInfo] = useState<Array<string>>([])
+  const [userInfo, setUserInfo] = useState<Array<Array<string>>>([])
   const [tokenInfo, setTokenInfo] = useState<string>('')
   const [validator, setValidator] = useState<string>('')
   const [showStaker, setShowStaker] = useState<boolean>(false)
   const [stakerInfo, setStakerInfo] = useState<Array<string>>([])
   const [stakerBadge, setStakerBadge] = useState<string>('')
   const [refresh, setRefresh] = useState<boolean>(false)
-
 
   function Show_each_staked_info(): JSX.Element {
     if (!stakerInfo.length) {
@@ -126,16 +127,21 @@ function App() {
   }
 
   function Show_info() {
-    if (!memberInfo.length) return null
-    if (yourRole == "NeuRacle Validator") {
+    if (validatorInfo.length) {
       return <div><div style={{ border: '3px solid lightgreen'}}>
-        Name: {memberInfo![0]} <br /> Country: {memberInfo![1]} <br /> Website: {memberInfo![2]} <br /> Address: {memberInfo![3]} 
+        Name: {validatorInfo![0]} <br /> Country: {validatorInfo![1]} <br /> Website: {validatorInfo![2]} <br /> Address: {validatorInfo![3]} 
       </div><br/></div>
     }
-    else if (yourRole == "NeuRacle User") {
-      return <div><div style={{ border: '3px solid lightblue' }}>
-        Your data source: {memberInfo![0]} <br /> This account have access until epoch {memberInfo![1]}
-      </div><br/></div>
+    else if (userInfo.length) { 
+  
+      console.log("HEYYYYYYYYYYYY>>>",userInfo)
+      const listItems = userInfo.map((x) =>
+      <li key = {x[3]}><div style={{ border: '3px solid lightblue', maxWidth: '500px', padding: '10px', margin: '10px auto', overflowWrap: 'anywhere' }}>
+          Your data source: {x[0]} 
+          <br /> This account have access until epoch {x[1]} 
+          <br /> Your off-chain data: {x[2]}
+          </div><br/></li>);
+      return <div>{listItems}</div>
     }
     else return null
   }
@@ -154,13 +160,6 @@ function App() {
           Change fee
         </button> | <button type="button" onClick={function () { }}>
           Withdraw fee
-        </button>
-      </div>
-    }
-    else if (yourRole == 'NeuRacle User') {
-      return <div><br/>
-        <button type="button" onClick={function () { }}>
-          Show your data:
         </button>
       </div>
     }
@@ -244,24 +243,53 @@ function App() {
           const user = my_resource.find((resource: { resource_address: string} ) => {
             return resource.resource_address === USER_BADGE
           })
+
           if (admin) {
             setYourRole("NeuRacle Admin")
           }
 
           else if (validator) {
+            setUserInfo([])
 
             setYourRole("NeuRacle Validator")
 
-            setMemberInfo(await get_nft_data(validator.non_fungible_ids[0], VALIDATOR_BADGE))
+            setValidatorInfo(await get_nft_data(validator.non_fungible_ids[0], VALIDATOR_BADGE))
 
           }
 
           else if (user) {
-
+            setValidatorInfo([]);
+            const user_infos: string[][] = []
             setYourRole("NeuRacle User")
-            setMemberInfo(await get_nft_data(user.non_fungible_ids[0], USER_BADGE))
-     
-          }
+            
+            for (const x of user.non_fungible_ids) {
+
+              const user_info = await get_nft_data(x, USER_BADGE)
+
+              const response = await fetch(user_info[0], {method: 'GET'})
+
+              if (response.ok) {
+
+                const your_data = await response.json()
+
+                const result = JSON.stringify(your_data)
+
+                user_info.push(result, x)
+                
+                console.log("OKKKKKKKKKKKKKKKKK", result)
+
+              } else {
+                console.log("NOOOOOOOOOOOOOOOOOO>", response)
+                user_info.push("Your data is inaccessible", x)
+                continue
+              }
+              
+            user_infos.push(user_info)
+
+            }
+            setUserInfo(user_infos)
+            } 
+
           else if (accountAddress == TESTER) {
             setYourRole("TESTER")
           } else { setYourRole("Visitor")} 
@@ -281,7 +309,7 @@ function App() {
                 `https://pte01.radixdlt.com/component/${staker_info[0]}`
   
               )
-  
+              
               const parseData = await response.json()
   
               const parseNonFungibleId = JSON.parse(parseData.state).fields[0].elements
@@ -622,9 +650,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setRefresh(false);
-      
        data();
-
       }, 100);
   }, [accountAddress, yourRole, showStaker, refresh]);
 
@@ -632,7 +658,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Welcome to NeuRacle!</p>
+        <p>Welcome to NeuRacle! (Incompleted)</p>
         <div>
           Install <a
             className="App-link"

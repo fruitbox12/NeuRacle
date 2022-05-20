@@ -1,3 +1,6 @@
+//! [NeuRacle] on-chain governance blueprint is the core blueprint of NeuRacle.
+//! NeuRacle L2 ecosystem or any third-party NeuRacle service user will have to fetch data through this blueprint.
+
 use scrypto::prelude::*;
 use crate::neura_stable_coin::NStableCoin;
 use crate::validator::Validator;
@@ -23,47 +26,47 @@ pub struct UserData {
 blueprint! {
 
     struct NeuRacle {
-
+        /// Store NeuRacle validated datas.
         datas: BTreeMap<String, String>,
-        non_validated_datas: HashMap<String, String>,
+        /// Store L2 stable coins project and it's name
         stable_coins: LazyMap<ComponentAddress, String>,
-        validators: Vec<(ComponentAddress, Decimal)>,
-        validator_cap: usize,
+        /// NeuRacle Validators and their vote weight (staked amount).
+        validators: Vec<(ComponentAddress, Decimal)>, 
+        /// The maximum validator will be choosed to validate data and mint reward per data feeding round
+        validator_cap: usize, 
         neura_vault: Vault,
-        controller_badge: Vault,
-        neura: ResourceAddress,
+        /// NeuRacle component controller badge, this can also be used to control other project in NeuRacle L2
+        controller_badge: Vault, 
+        neura: ResourceAddress, 
         validator_badge: ResourceAddress,
         user_badge: ResourceAddress,
-        pay_rate: Decimal,
-        fee_stablecoin: Decimal,
-        unstake_delay: u64,
-        stage: u8,
-        round_length: u64,
-        reward_rate: Decimal,
-        punishment: Decimal,
-        system_time: u64,
-        round_start: bool,
-        active_validators: HashMap<ComponentAddress, Decimal>,
-        mint_controller_badge: Vault,
-        leader: Option<ComponentAddress>
+        /// The rate which user has to pay per data feeding round. All will be burned.
+        pay_rate: Decimal, 
+        /// The fee user has to pay for ecosystem when using L2 stablecoin project of NeuRacle. All will be burned.
+        fee_stablecoin: Decimal, 
+        /// Unstaking will be delayed for an amount of time before withdrawal.
+        unstake_delay: u64, 
+        /// After having a good decentralization and security, Admin can advance stage to allow anyone can become validator.
+        stage: u8, 
+        /// The frequent of data feeding. Current Scrypto version only allow using epoch time unit, so the lowest is 1 epoch, estimated 1 hour per data update.
+        round_length: u64, 
+        /// The inflation percent each round. If reward_rate is 0.0015% and 1 round = 1 epoch ~ 1 hour, that's about 13.14% APY.
+        reward_rate: Decimal, 
+        /// Untruthful validator behavior will be punished * times per reward rate. Eg: punishment = 5, reward rate = 0.0015 > punish 0.0075% per round.
+        punishment: Decimal, 
+        /// NeuRacle system time, caculated by current epoch / round length.
+        system_time: u64, 
+        /// Keep track of the round status.
+        round_start: bool, 
+        /// Keep track of the active validators per round.
+        active_validators: HashMap<ComponentAddress, Decimal>, 
+        /// The badge to mint new NeuRacle ecosystem controller badge when new L2 project created.
+        mint_controller_badge: Vault, 
 
     }
 
     impl NeuRacle {
 
-        ///For easier understanding, I will just explain the input parameters by examples.
-        ///validator_cap = 100 (same as Radix Olympia) > Data will only be choosen from top 100 validator.
-        ///round_length = 1 > Data will be refreshed after 1 epoch. Current Scrypto version can only use this unit of timestamp. 
-        ///Later NeuRacle will use transactions amount as unit of timestamp. 
-        ///Or NeuRacle can even use time oracle service of others in the ecosystem.
-        ///pay_rate = 1 > users must pay the ecosystem 1 neura fee per "round"
-        ///fee_stablecoin = 0.3 > stable coin users must pay the ecosystem 0.3% fee.
-        ///Same as the Radix Ecosystem, all the fee are burned!
-        ///unstake_delay(epoch) = 500 (Same as Radix Olympia) > staker can only redeem their token after 500 epoch. 
-        ///This is to ensure security of the ecosystem.
-        ///reward_rate(%) = 0.0015 > stakers will earn 0.0015% of staked amount per round
-        ///if round length = 1 epoch, estimated is 1 hour, that's about 13.14% APY.
-        ///punishment = 5 > staked value will be slashed by 10 * reward rate on untruthful behavior.
         ///The output is NeuRacle Component address, initial Neura token bucket and the admin badge.
         pub fn new(validator_cap: usize, round_length: u64, pay_rate: Decimal, fee_stablecoin: Decimal, unstake_delay: u64, reward_rate: Decimal, punishment: Decimal) -> (ComponentAddress, Bucket, Bucket) {
 
@@ -131,7 +134,6 @@ blueprint! {
 
             let component = Self {
                 datas: BTreeMap::new(),
-                non_validated_datas: HashMap::new(),
                 stable_coins: LazyMap::new(),
                 validators: Vec::new(),
                 validator_cap: validator_cap,
@@ -150,8 +152,7 @@ blueprint! {
                 system_time: system_time,
                 round_start: false,
                 active_validators: HashMap::new(),
-                mint_controller_badge: Vault::with_bucket(mint_controller_badge),
-                leader: None,
+                mint_controller_badge: Vault::with_bucket(mint_controller_badge)
                 }
                 .instantiate()
                 .add_access_check(rules)
@@ -164,7 +165,7 @@ blueprint! {
             return (component, admin_badge, neura)
         }
 
-        ///At first, to prevent Sybil attack, NeuRacle also need to use DPoS mechanism and choose only Validators that has the basic requirement of network traffic.
+        ///At first, to prevent Sybil attack, NeuRacle also need to use DPoS mechanism and choose only Validators that has the basic requirement of network traffic and security.
         pub fn create_new_validator_node(&mut self, name: String, location: String, website: String, fee: Decimal) -> (ComponentAddress, Bucket) {
 
             assert!(self.stage == 1);
@@ -228,6 +229,7 @@ blueprint! {
 
         }
 
+        /// Anyone can become NeuRacle user with NAR token, the data source must be an accessible api or validators won't get the data
         pub fn become_new_user(&mut self, mut payment: Bucket, api: String) -> (Bucket, Bucket) {
 
             let amount = payment.amount();
