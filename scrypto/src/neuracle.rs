@@ -12,6 +12,7 @@ pub struct ValidatorData {
     pub location: String,
     pub website: String,
     #[scrypto(mutable)]
+    /// Validator Component Address
     pub address: String
 
 }
@@ -19,18 +20,21 @@ pub struct ValidatorData {
 #[derive(NonFungibleData)]
 pub struct UserData {
     #[scrypto(mutable)]
+    /// Time limit of data fetching
     pub end: u64,
+    /// Data source
     pub api: String,
 }
 
 blueprint! {
 
     struct NeuRacle {
+
         /// Store NeuRacle validated datas.
         datas: BTreeMap<String, String>,
         /// Store L2 stable coins project and it's name
         stable_coins: LazyMap<ComponentAddress, String>,
-        /// NeuRacle Validators and their vote weight (staked amount).
+        /// Store NeuRacle Validator Addresses and their vote weight (staked amount).
         validators: Vec<(ComponentAddress, Decimal)>, 
         /// The maximum validator will be choosed to validate data and mint reward per data feeding round
         validator_cap: usize, 
@@ -46,7 +50,7 @@ blueprint! {
         fee_stablecoin: Decimal, 
         /// Unstaking will be delayed for an amount of time before withdrawal.
         unstake_delay: u64, 
-        /// After having a good decentralization and security, Admin can advance stage to allow anyone can become validator.
+        /// After having a good decentralization and security, Admin can advance stage to allow anyone can become validator. Initial stage is stage 1.
         stage: u8, 
         /// The frequent of data feeding. Current Scrypto version only allow using epoch time unit, so the lowest is 1 epoch, estimated 1 hour per data update.
         round_length: u64, 
@@ -314,6 +318,9 @@ blueprint! {
             return (identity, my_data)
         }
 
+        /// This method will check the staking weight of each validator, set their round start status (so they're able to update data), and reset their active status.
+        /// On stage 1, this method will also eliminate all validators that aren't on top 100 staking weight.
+        /// The method can only be called after 1 "round length" of last round end time.
         pub fn new_round(&mut self) -> Bucket {
             
             assert!(
@@ -372,6 +379,9 @@ blueprint! {
             return reward
         }
 
+        /// This method will check on the active status of validators and can only advance if >2/3 validator is active.
+        /// After that, this method will get the datas with the most weight, check if it > 2/3 vote weight,
+        /// feed that on NeuRacle, reward the validators provided same datas and punish those didn't.
         pub fn end_round(&mut self) -> Bucket {
             
             assert!(
@@ -451,6 +461,7 @@ blueprint! {
             
         }
 
+        /// A method to create NeuRacle's native stablecoin project. 
         pub fn new_stable_coin_project(&mut self, pegged_to: String, api: String) -> ComponentAddress {
 
             if !self.datas.contains_key(&api) {

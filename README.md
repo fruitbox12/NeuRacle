@@ -1,13 +1,13 @@
-# NeuRacle: Layer 2 Oracle solution on Radix Network
+# NeuRacle: Decentralized, Trustless Oracle solution on Radix Network
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-NeuRacle is a PoS Layer 2 solution built on Radix Ledger that provide decentralized, trustless data validation service to bring-in off-chain data.
+NeuRacle is a Decentralized, Trustless Oracle built on Radix Ledger that provide decentralized, trustless data validation service to bring-in off-chain data.
 
 ## Oracle Trilemma
 
-Most traditional Oracle recent day come to the same [problems](https://encyclopedia.pub/entry/2959), that have to either compromised on decentralization (using trusted identities to bring data on-chain, eg: [ChainLink](https://james-sangalli.medium.com/why-chainlink-is-not-the-oracle-of-the-future-8bb859a81947#:~:text=ChainLink%20does%20not%20have%20a,centralised%20verification%20and%20dispute%20resolution.)), finality (like using optimistic oracle, bet to bring data on-chain, eg: [UMA](https://umaproject.org/products/optimistic-oracle)), or security. It's almost the same as the [blockchain trilemma](https://www.ledger.com/academy/what-is-the-blockchain-trilemma).
+Most traditional Oracle recent day come to the same [problems](https://encyclopedia.pub/entry/2959), that have to either compromised on decentralization (using trusted identities to bring data on-chain, eg: [ChainLink](https://james-sangalli.medium.com/why-chainlink-is-not-the-oracle-of-the-future-8bb859a81947#:~:text=ChainLink%20does%20not%20have%20a,centralised%20verification%20and%20dispute%20resolution.)), finality (optimistic oracle that use bets to bring data on-chain, eg: [UMA](https://umaproject.org/products/optimistic-oracle)), or security. It's almost the same as the [blockchain trilemma](https://www.ledger.com/academy/what-is-the-blockchain-trilemma).
 
 ## From Oracle to Distributed Ledger Technology
 
@@ -23,7 +23,7 @@ As an utilization of Cerberus Concensus Model, NeuRacle will have some similar d
 
 Data Providers ~ [Validator Nodes](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-ii).
 
-NeuRacle Ecosystem (Layer 2) ~ [Shardspace](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-ii).
+NeuRacle Ecosystem ~ [Shardspace](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-ii).
 
 Lively data from an online source ~ [Shard](https://www.radixdlt.com/post/cerberus-infographic-series-chapter-iv).
 
@@ -39,11 +39,38 @@ Components = Components.
 
 ## Quick Start
 
+For windows user: if you has git installed with [git bash](https://www.stanleyulili.com/git/how-to-install-git-bash-on-windows/) and [VSCode](https://code.visualstudio.com/), you should be able to run .sh file through git bash
+![](gitbash.PNG)
+
+Clone this git repository: `git clone `
+
+### Backend quick testing
+
+1. Build the package: `cd scrypto && scrypto build`
+2. Quick end to end testing: `cd test && . end_to_end.sh`
+3. Check the test explained: `./README.md`
+
+### Frontend testing (Incompleted)
+
+*This frontend is bootstraped with Vite and React.*
+*For now, the prototype can only be tested on https://pte01.radixdlt.com/ sever*
+
+1. Ensure all dependent package are installed: `npm install`
+2. Testing the local environment: `npm run dev`
+3. Go to the variable environment file, delete all current variable and enter your wallet address on "TESTER=''": `./src/NEURACLE.tsx`
+4. Back on the page, try publish package and become NeuRacle Admin, follow any instruction that prompt up. (After publish the package you should delete it immediately or it would cause lagging) 
+5. Now you have become NeuRacle Admin, you can assign another address as validator, or change into other account and become user to try the UI and staking mechanism.
+6. You can also try become an user with this api: http://worldclockapi.com/api/json/est/now
+
+*Note: Current version of NeuRacle UI doesn't support multiple role at one account address, you should try other role in other account instead. You can send NAR token to other account via [pouch](https://plymth.github.io/pouch/).*
+
 ## System Explaination
+
+**Learn about NeuRacle prototype**: `cd .. && cargo doc --no-deps --document-private-items --open`
 
 ### NeuRacle ecosystem's entities
 
-There are 3 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **NeuRacle Gateway** and **NeuRacle Storage**.
+There are 5 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **NeuRacle Gateway**, **NeuRacle Storage** and **NeuRacle's Native Projects**.
 
 **Validators**, or Data Providers are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway.
 
@@ -65,6 +92,14 @@ NeuRacle Storage exist for users that can't point to the exact data source they 
 
 NeruRacle Storage can also be a distributed system for more security.
 
+**NeuRacle's Native Projects** are the projects that's built through NeuRacle blueprint (Eg: USDN stable coin project on the prototype showcase) or other projects that:
+
+- Use the NeuRacle blueprint to fetch off-chain data.
+- Have a tokeneconomic that ensure a rate of NAR burning when the project create new value.
+- Don't have any method to reroute NeuRacle's data.
+
+Native Projects on NeuRacle ecosystem will receive a badge to freely fetch validated data on-chain.
+
 ### Why one source?
 
 Aggregrate data on-chain will be much more computation costly.
@@ -79,7 +114,7 @@ Providers, sellers can also use NeuRacle service to feed their product's price d
 
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
 
-## Why don't just use those off-chain decentralized data.
+### Why don't just use those off-chain decentralized data.
 
 To feed any off-chain data, the oracle still need to rely on "a trusted bridge" or "a trusted medium", lead to a single point of failure, eg: [Ronin bridge](https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack). However, NeuRacle use a large set of validators to ensure decentralized, trustless data feeding.
 
@@ -121,7 +156,7 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 **Security, Liveness Break**: NeuRacle has the same Sybil Resistance as Radix Network, malicious entities will need >1/3 staked value to break liveness, >2/3 staked value to really conduct a meaningful attack. Based on game-theory, that attack will really hard and costly. With sharded NeuRacle, the validator sets, as well as the data sources they may validate in the next round will all be randomized, make an attack become almost impossible.
 
-**Single point of unstability**: As mentioned above, the stability of data stream has to be relied on the Admin's monitor, create a *Single point of unstability*. NeuRacle use an unstable time unit on-chain like transaction history or epoch, that will affect the *round-length limited time*. Since token burning, minting and data updating all happened on data feeding round, the unstable round-length might lead to an *unstable stream of data* and *unpredicted tokeneconomy*. Stablizing round-length would need to rely on Admin's monitor (Or the NeuRacle DAO in the future).
+**Single point of instability**: As mentioned above, the stability of data stream has to be relied on the Admin's monitor, create a *Single point of instability*. Using an unstable time unit on-chain like transaction history or epoch will affect the *round-length limited time*. Since token burning, minting and data updating all happened on data feeding round, the unstable round-length might lead to an *unstable stream of data* and *unpredicted tokeneconomy*. Stablizing round-length would need to rely on Admin's monitor (Or the NeuRacle DAO in the future).
 
 Although such a bad thing might happen on NeuRacle, it wouldn't be a critical problem of an Oracle. Unstable data updating time won't affect most Oracle usecase as long as the data is frequently updated. However, the data might be delayed more than tolerance and break liveness, lead to other *critical problem* might happened on NeuRacle. (check *Congested Network*)
 

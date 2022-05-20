@@ -1,11 +1,16 @@
+//! [Neura Stable coin] blueprint is the blueprint for creating native stable coin project of NeuRacle ecosystem.
+//! User can use this blueprint for swapping into algorithmed stablecoin.
+//! Since the token have no initial supply, even without "the stable value", Neura still have other utility. It won't follow Luna's example.
+//! Other individuals, teams can also utilize this blueprint to create "stable value" for their own token by get a Neuracle user badge and feed that on the input arguments.
+//! Eg: Ociswap can buy a Neuracle user badge and use this blueprint to make their OCI token both a DEX medium and a stable coin medium.
+
 use scrypto::prelude::*;
 use crate::neuracle::NeuRacle;
 
 blueprint! {
     struct NStableCoin {
-        fee_vault: Vault,
         fee: Decimal,
-        neura: ResourceAddress,
+        medium: ResourceAddress,
         symbol: String,
         pegged_to: String,
         stablecoin: ResourceAddress,
@@ -40,9 +45,8 @@ blueprint! {
                 );
 
             let component = Self {
-                fee_vault: Vault::new(medium_token),
-                fee: fee,
-                neura: medium_token,
+                fee: fee / dec!("100"),
+                medium: medium_token,
                 symbol: symbol,
                 pegged_to: pegged_to,
                 stablecoin: stablecoin,
@@ -74,21 +78,21 @@ blueprint! {
             
             let token = token_bucket.resource_address();
             assert!(
-                (token == self.stablecoin) || (token == self.neura) ,
+                (token == self.stablecoin) || (token == self.medium) ,
                 "Vault not contain this resource, cannot swap."
             );
 
-            if token == self.neura {
+            if token == self.medium {
 
                 let initial_amount: Decimal = token_bucket.amount();
 
-                let amount: Decimal = initial_amount * price;
+                let amount: Decimal = initial_amount * price * (dec!("1") - self.fee);
 
                 let stable_coin_bucket = self.controller_badge.authorize(|| {
                     borrow_resource_manager!(self.stablecoin).mint(amount)
                 });
 
-                self.controller_badge.authorize(|| borrow_resource_manager!(self.neura).burn(token_bucket));
+                self.controller_badge.authorize(|| borrow_resource_manager!(self.medium).burn(token_bucket));
 
                 info!("You have swappd {} {} for {} {}.", initial_amount, self.symbol, amount, self.pegged_to.clone() + "N");
 
@@ -99,7 +103,7 @@ blueprint! {
 
                 let initial_amount: Decimal = token_bucket.amount();
 
-                let amount: Decimal = initial_amount / price;
+                let amount: Decimal = (initial_amount / price) * (dec!("1") - self.fee);
 
                 let medium_token_bucket = self.controller_badge.authorize(|| {
                     borrow_resource_manager!(self.stablecoin).mint(amount)

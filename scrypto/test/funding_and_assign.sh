@@ -19,7 +19,8 @@ logp "Unstake delay: 500"
 logp "Reward rate: 0.0015"
 logp "Punishment: 10"
 
-logy "Check doc to study about these parameters"
+logy "You can change these parameters on ./transaction_manifest/instantiate"
+logy "Check the document to study about these parameters"
 
 output=`resim run ./transaction_manifest/instantiate | awk '/Admin badge address: |Validator badge address: |User badge: |Neura: |Component: / {print $NF}'`
 export ADMIN_BADGE=`echo $output | cut -d " " -f1`

@@ -3,6 +3,8 @@
 #set -x
 set -e
 
+source ./log.sh
+
 logc "The Gateway get api list from NeuRacle component, fetch and feed data to the system"
 
 logy "This will take a bit"

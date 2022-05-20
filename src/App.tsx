@@ -6,8 +6,6 @@ import { getAccountAddress, signTransaction} from 'pte-browser-extension-sdk'
 import Notiflix from 'notiflix'
 import { TESTER, ADMINBADGE, PACKAGE, NAR, COMPONENT, VALIDATOR_BADGE, USER_BADGE } from './NEURACLE'
 
-
-
 function App() {
   const [accountAddress, setAccountAddress] = useState<string>('')
   const lightgreen = { color: 'lightgreen' }
@@ -134,7 +132,6 @@ function App() {
     }
     else if (userInfo.length) { 
   
-      console.log("HEYYYYYYYYYYYY>>>",userInfo)
       const listItems = userInfo.map((x) =>
       <li key = {x[3]}><div style={{ border: '3px solid lightblue', maxWidth: '500px', padding: '10px', margin: '10px auto', overflowWrap: 'anywhere' }}>
           Your data source: {x[0]} 
@@ -154,15 +151,15 @@ function App() {
         </button>
       </div>
     }
-    else if (yourRole == 'NeuRacle Validator') {
-      return <div><br/>
-        <button type="button" onClick={function () { }}>
-          Change fee
-        </button> | <button type="button" onClick={function () { }}>
-          Withdraw fee
-        </button>
-      </div>
-    }
+    // else if (yourRole == 'NeuRacle Validator') {
+    //   return <div><br/>
+    //     <button type="button" onClick={function () { }}>
+    //       Change fee
+    //     </button> | <button type="button" onClick={function () { }}>
+    //       Withdraw fee
+    //     </button>
+    //   </div>
+    // }
     else if (yourRole == 'TESTER') {
       return <div><br/><button type="button" onClick={publish_package}>
         Publish package
@@ -214,7 +211,8 @@ function App() {
 
     async function fetchData(): Promise<any> {
       try {
-
+        setUserInfo([])
+        setValidatorInfo([])
         setAccountAddress(await getAccountAddress())
 
         if (accountAddress == '') {
@@ -249,7 +247,7 @@ function App() {
           }
 
           else if (validator) {
-            setUserInfo([])
+            
 
             setYourRole("NeuRacle Validator")
 
@@ -258,7 +256,7 @@ function App() {
           }
 
           else if (user) {
-            setValidatorInfo([]);
+            
             const user_infos: string[][] = []
             setYourRole("NeuRacle User")
             
@@ -275,11 +273,9 @@ function App() {
                 const result = JSON.stringify(your_data)
 
                 user_info.push(result, x)
-                
-                console.log("OKKKKKKKKKKKKKKKKK", result)
 
               } else {
-                console.log("NOOOOOOOOOOOOOOOOOO>", response)
+
                 user_info.push("Your data is inaccessible", x)
                 continue
               }
@@ -354,7 +350,7 @@ function App() {
   
     const newpack: string = receipt.newPackages[0];
     success("Done!");
-    info("Change the value", "New package address: " + newpack + ". Please add this on NEURACLE.tsx");
+    info("Change the value", "New package address: " + newpack + ". " + "\nPlease add this on NEURACLE.tsx");
     setRefresh(true);
     
   }
@@ -367,10 +363,16 @@ function App() {
       .toString();
 
     const receipt = await signTransaction(manifest);
+
+    var log = '\n'
+
+    for (const x of receipt.logs) {
+      log += x + '. \n'
+        }
  
     if (receipt.status == 'Success') {
       success("Done!");
-      info("Change the value", 'You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file. ' + receipt.logs.toString())
+      info("Change the value", 'You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file. ' + log)
     }
     else {
       failure_big("Failed", "Please try again: " + receipt.logs.toString())
@@ -625,7 +627,7 @@ function App() {
       function () {
       },
       {
-        width: "1000px",
+        width: "525px",
         messageMaxLength: 1000,
       }
     )
@@ -652,7 +654,7 @@ function App() {
       setRefresh(false);
        data();
       }, 100);
-  }, [accountAddress, yourRole, showStaker, refresh]);
+  }, [accountAddress, yourRole, showStaker, tokenInfo, refresh]);
 
   return (
     <div className="App">
@@ -670,7 +672,7 @@ function App() {
           </a> PTE to getting started.
         </div>
         <p>
-          Check your balance through <a
+          Send your NAR token through <a
             className="App-link"
             href="https://plymth.github.io/pouch/"
             target="_blank"

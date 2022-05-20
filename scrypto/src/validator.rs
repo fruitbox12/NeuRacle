@@ -1,15 +1,23 @@
+//! [Validator] blueprint is the blueprint to create new validator for NeuRacle ecosystem.
+//! User can also stake to, or unstake, withdraw from validators through this blueprint.
+//! Other PoS projects can also utilize this blueprint to build staking, voting mechanisms.
+
 use scrypto::prelude::*;
 use crate::utilities::*;
 
 #[derive(NonFungibleData)]
 pub struct Staker {
+    /// Validator component address
     pub address: String,
     pub validator_name: String,
     #[scrypto(mutable)]
+    /// Unstaking amount
     pub unstaking: Decimal,
     #[scrypto(mutable)]
+    /// End time of current unstaking
     pub end: u64,
     #[scrypto(mutable)]
+    /// Current available for withdrawal
     pub unstaked: Decimal
 }
 
@@ -17,25 +25,33 @@ blueprint! {
 
     struct Validator {
 
+        /// Store staker info with their staked amount
         staker: HashMap<NonFungibleId, Decimal>,
         name: String,
+        /// Staker has to pay fee % for validator in each successful data validating round
         fee: Decimal,
+        /// Store unstaking, unstaked amount
         unstake_vault: Vault,
         staked_vault: Vault,
         fee_vault: Vault,
         controller_badge: Vault,
         staker_badge: ResourceAddress,
-        neura: ResourceAddress,
+        medium_token: ResourceAddress,
+        /// Waiting time when start unstaking
         unstake_delay: u64,
+        /// Store new datas on-chain
         datas: BTreeMap<String, String>,
+        /// Keep track of round status
         round_start: bool,
+        /// Keep track of validator status
         active: bool
 
     }
 
     impl Validator {
 
-        pub fn new(neura: ResourceAddress, badge: ResourceAddress, neura_controller_badge: ResourceAddress, name: String, fee: Decimal, unstake_delay: u64) -> ComponentAddress {
+        /// Other dev can use these input arguments for their own project.
+        pub fn new(medium_token: ResourceAddress, badge: ResourceAddress, neura_controller_badge: ResourceAddress, name: String, fee: Decimal, unstake_delay: u64) -> ComponentAddress {
 
             assert_fee(fee);
 
@@ -66,12 +82,12 @@ blueprint! {
                 staker: HashMap::new(),
                 name: name.clone(),
                 fee: fee / dec!("100"),
-                unstake_vault: Vault::new(neura),
-                staked_vault: Vault::new(neura),
-                fee_vault: Vault::new(neura),
+                unstake_vault: Vault::new(medium_token),
+                staked_vault: Vault::new(medium_token),
+                fee_vault: Vault::new(medium_token),
                 controller_badge: Vault::with_bucket(controller_badge),
                 staker_badge: staker_badge,
-                neura: neura,
+                medium_token: medium_token,
                 unstake_delay: unstake_delay,
                 datas: BTreeMap::new(),
                 round_start: false,
@@ -89,7 +105,7 @@ blueprint! {
 
         pub fn stake(&mut self, bucket: Bucket) -> Bucket {
 
-            assert_resource(bucket.resource_address(), self.neura, bucket.amount(), Decimal::zero());
+            assert_resource(bucket.resource_address(), self.medium_token, bucket.amount(), Decimal::zero());
 
             let user_id: NonFungibleId = NonFungibleId::random();
 
@@ -119,7 +135,7 @@ blueprint! {
         pub fn add_stake(&mut self, bucket: Bucket, identity: Bucket) -> Bucket {
 
             assert_resource(identity.resource_address(), self.staker_badge, identity.amount(), dec!("1"));
-            assert_resource(bucket.resource_address(), self.neura, bucket.amount(), dec!("0"));
+            assert_resource(bucket.resource_address(), self.medium_token, bucket.amount(), dec!("0"));
 
             let id = identity.non_fungible::<Staker>().id();
 
@@ -276,6 +292,7 @@ blueprint! {
             
         }
 
+        /// Validator can only update data on round start.
         pub fn update_data(&mut self, datas: BTreeMap<String, String>) {
 
             assert!(
@@ -283,7 +300,7 @@ blueprint! {
                 "The round haven't started, you can't update data yet"
             );
             
-            self.datas = datas.into_iter().collect();
+            self.datas = datas;
             self.active = true;
             self.round_start = false
 
@@ -302,6 +319,7 @@ blueprint! {
             self.datas.clone()
         }
 
+        /// Reward method for trustful validator
         pub fn mint(&mut self, rate: Decimal) {
 
             let amount = self.staked_vault.amount();
@@ -312,7 +330,7 @@ blueprint! {
 
             let reward = amount * rate;
 
-            let mut bucket = borrow_resource_manager!(self.neura)
+            let mut bucket = borrow_resource_manager!(self.medium_token)
                 .mint(reward);
 
             self.fee_vault.put(bucket.take(fee));
@@ -327,6 +345,7 @@ blueprint! {
 
         }
 
+        /// Punished methor for untruthful validator
         pub fn burn(&mut self, rate: Decimal) {
 
             let amount = self.staked_vault.amount();
@@ -335,7 +354,7 @@ blueprint! {
 
             let bucket = self.staked_vault.take(punish);
 
-            borrow_resource_manager!(self.neura).burn(bucket);
+            borrow_resource_manager!(self.medium_token).burn(bucket);
     
             for val in self.staker.values_mut() {
                 *val *= dec!("1") - rate

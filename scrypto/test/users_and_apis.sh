@@ -33,10 +33,10 @@ resim run ./transaction_manifest/refund2
 logc "Show current apis"
 resim run ./transaction_manifest/show_apis
 
-logy "In real case, the apis feed to NeuRacle Gateway should return only 1 specific data that user need"
+logy "In real case, the data source feed to NeuRacle Gateway should return only 1 specific data that user need"
 logy "For testing purpose, the Gateway prototype will just assume that users need 1 specific data from chunks of data that those apis return, and feedback the data users need"
 logy "In this case the Gateway prototype will assume that:"
-logp "user1 want 'the last price of xrd/usd on Bitfinex'"
+logp "user1 want 'the last traded price of xrd/usd on Bitfinex'"
 logp "user2 want 'realtime in Ho Chi Minh/VietNam timezone'"
 logp "user3 want 'the last aggregrated price of xrd/usd on CoinGecko'"
 logp "user4 want 'today date in London/Europe timezone'"

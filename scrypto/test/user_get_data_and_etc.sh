@@ -3,6 +3,8 @@
 #set -x
 set -e
 
+source ./log.sh
+
 logc "Users use badge to get data"
 
 resim set-default-account $USER1_ACC $USER1_PIV
@@ -20,17 +22,16 @@ resim call-method $COMP get_data 1,$USER_BADGE
 resim set-default-account $USER5_ACC $USER5_PIV
 resim call-method $COMP get_data 1,$USER_BADGE
 
-logc "Admin try to call new round again within round-length time."
+logc "A person try to call new round again within round-length time."
 logr "This should show error!"
 
-resim set-default-account $ADMIN_ACC $ADMIN_PIV
 resim run ./transaction_manifest/start_round || true
 
-logc "Advance epoch by 1000."
-epoch=$(($epoch + 1000))
+logc "Advance epoch by 1."
+epoch=$(($epoch + 1))
 resim set-current-epoch $epoch
 
-logg "Admin call new round again."
+logg "That person call new round again."
 resim run ./transaction_manifest/start_round
 
 resim set-default-account $VAL1_ACC $VAL1_PIV
@@ -38,9 +39,8 @@ export VALUP_ADDRESS=$VAL1_ADDRESS
 export VALUP_ACC=$VAL1_ACC
 resim run ./transaction_manifest/update_data
 
-logy "Only one validator is active, but Admin try to end the round."
+logy "Only one validator is active, but that validator try to end the round."
 logr "This should show error!"
-resim set-default-account $ADMIN_ACC $ADMIN_PIV
 resim run ./transaction_manifest/end_round || true
 
 resim set-default-account $VAL2_ACC $VAL2_PIV
@@ -58,8 +58,7 @@ export VALUP_ADDRESS=$VAL5_ADDRESS
 export VALUP_ACC=$VAL5_ACC
 resim run ./transaction_manifest/update_data_malicious
 
-logg "Now 4/5 validator voted, Admin try to end the round."
-resim set-default-account $ADMIN_ACC $ADMIN_PIV
+logg "Now 4/5 validator voted, someone try to end the round."
 resim run ./transaction_manifest/end_round
 
 logc "User try to get data after out of time."
