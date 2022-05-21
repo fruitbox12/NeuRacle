@@ -1,6 +1,5 @@
 //! [Neura Stable coin] blueprint is the blueprint for creating native stable coin project of NeuRacle ecosystem.
 //! User can use this blueprint for swapping into algorithmed stablecoin.
-//! Since the token have no initial supply, even without "the stable value", Neura still have other utility. It won't follow Luna's example.
 //! Other individuals, teams can also utilize this blueprint to create "stable value" for their own token by get a Neuracle user badge and feed that on the input arguments.
 //! Eg: Ociswap can buy a Neuracle user badge and use this blueprint to make their OCI token both a DEX medium and a stable coin medium.
 

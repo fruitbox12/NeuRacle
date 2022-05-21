@@ -151,8 +151,6 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 ### What bad things won't happend on NeuRacle?
 
-**Low performance Validators**: The data update will happen at the *almost same time* in every validators. Assume we have some validator with low performance that lead to a data update *slightly different*, that validator will right away deemed as *untruthful* and punished. This punish and reward mechanism will ensure all validator to host the Gateway at the best performance.
-
 **Single point of failure**: The data feeding system is decentralized, there is no single point of failure. 
 
 ### What bad things might happend on NeuRacle?
