@@ -5,6 +5,8 @@
 
 NeuRacle is a Decentralized, Trustless Oracle built on Radix Ledger that provide decentralized, trustless data validation service to bring-in off-chain data.
 
+![](./src/logo.svg)
+
 ## Oracle Trilemma
 
 Most traditional Oracle recent day come to the same [problems](https://encyclopedia.pub/entry/2959), that have to either compromised on decentralization (using trusted identities to bring data on-chain, eg: [ChainLink](https://james-sangalli.medium.com/why-chainlink-is-not-the-oracle-of-the-future-8bb859a81947#:~:text=ChainLink%20does%20not%20have%20a,centralised%20verification%20and%20dispute%20resolution.)), finality (optimistic oracle that use bets to bring data on-chain, eg: [UMA](https://umaproject.org/products/optimistic-oracle)), or security. It's almost the same as the [blockchain trilemma](https://www.ledger.com/academy/what-is-the-blockchain-trilemma).
