@@ -41,7 +41,8 @@ Components = Components.
 
 ## Quick Start
 
-For windows user: if you has git installed with [git bash](https://www.stanleyulili.com/git/how-to-install-git-bash-on-windows/) and [VSCode](https://code.visualstudio.com/), you should be able to run .sh file through git bash
+*For windows user:* if you has git installed with [git bash](https://www.stanleyulili.com/git/how-to-install-git-bash-on-windows/) and [VSCode](https://code.visualstudio.com/), you should be able to run .sh file through git bash
+
 ![](gitbash.PNG)
 
 Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle.git`
@@ -68,15 +69,15 @@ Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle.git`
 
 ## System Explaination
 
-**Learn about NeuRacle prototype**: `cd .. && cargo doc --no-deps --document-private-items --open`
+**Learn about NeuRacle prototype**: `cd scrypto && cargo doc --no-deps --document-private-items --open`
 
 ### NeuRacle ecosystem's entities
 
 There are 5 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **NeuRacle Gateway**, **NeuRacle Storage** and **NeuRacle's Native Projects**.
 
-**Validators**, or Data Providers are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway.
+**Validators**, or Data Providers are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway. 
 
-**NeuRacle Gateway** is a **decentralized off-chain entity** that will play role as a medium to automatically fetch data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf. To further prevent exploit, the key (or badge) will be provided to the Validator Local Gateway instead of the Validator himself. Change fee rate, collect validator fee also have to executed through NeuRacle Gateway.
+**NeuRacle Gateway** is a **decentralized off-chain entity** that will play role as a medium to automatically fetch data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf.
 
 NeuRacle will let users to choose data from any online source they want from, they can also choose on-chain aggregrated data but that will ofc more costly.
 

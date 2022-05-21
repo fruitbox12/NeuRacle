@@ -125,15 +125,15 @@ function App() {
   }
 
   function Show_info() {
-    if (validatorInfo.length) {
-      return <div><div style={{ border: '3px solid lightgreen'}}>
+    if (yourRole == 'NeuRacle Validator') {
+      return <div><div style={{ border: '3px solid lightgreen', padding: '10px', margin: '10px auto'}}>
         Name: {validatorInfo![0]} <br /> Country: {validatorInfo![1]} <br /> Website: {validatorInfo![2]} <br /> Address: {validatorInfo![3]} 
       </div><br/></div>
     }
-    else if (userInfo.length) { 
+    else if (yourRole == 'NeuRacle User') { 
   
       const listItems = userInfo.map((x) =>
-      <li key = {x[3]}><div style={{ border: '3px solid lightblue', maxWidth: '500px', padding: '10px', margin: '10px auto', overflowWrap: 'anywhere' }}>
+      <li key = {x[3]}><div style={{ border: '3px solid lightblue', maxWidth: '1000px', padding: '10px', margin: '10px auto', overflowWrap: 'anywhere' }}>
           Your data source: {x[0]} 
           <br /> This account have access until epoch {x[1]} 
           <br /> Your off-chain data: {x[2]}
@@ -208,17 +208,14 @@ function App() {
   }
 
   async function data() {
-
-    async function fetchData(): Promise<any> {
+    Notiflix.Loading.pulse();
       try {
-        setUserInfo([])
-        setValidatorInfo([])
-        setAccountAddress(await getAccountAddress())
 
-        if (accountAddress == '') {
-          return
-        } else {
-          const response = await fetch(`https://pte01.radixdlt.com/component/${accountAddress}`)
+          let account = await getAccountAddress()
+
+          setAccountAddress(account)
+
+          const response = await fetch(`https://pte01.radixdlt.com/component/${account}`)
 
           const component = await response.json()
 
@@ -326,14 +323,10 @@ function App() {
               setStakerInfo([])
             }
           } 
-        }
-      } catch {
-        fetchData()
+      } catch { failure("Something wrong!")
       }
-    }
-    Notiflix.Loading.pulse();
-    fetchData();
-    Notiflix.Loading.remove();
+    
+    Notiflix.Loading.remove()
   }
 
   async function publish_package() {
@@ -652,9 +645,9 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setRefresh(false);
-       data();
-      }, 100);
-  }, [accountAddress, yourRole, showStaker, tokenInfo, refresh]);
+      data();
+    }, 100);
+  }, [accountAddress, refresh]);
 
   return (
     <div className="App">
