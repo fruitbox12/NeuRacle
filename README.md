@@ -44,7 +44,7 @@ Components = Components.
 For windows user: if you has git installed with [git bash](https://www.stanleyulili.com/git/how-to-install-git-bash-on-windows/) and [VSCode](https://code.visualstudio.com/), you should be able to run .sh file through git bash
 ![](gitbash.PNG)
 
-Clone this git repository: `git clone `
+Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle.git`
 
 ### Backend quick testing
 
