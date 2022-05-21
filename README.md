@@ -50,8 +50,8 @@ Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle`
 ### Backend quick testing
 
 1. Build the package: `cd scrypto && scrypto build`
-2. Quick end to end testing: `cd test && . end_to_end.sh`
-3. Check the test explained: `./README.md`
+2. Quick end to end testing: `cd test && ./end_to_end.sh`
+3. Check the test explained: [./README.md](./scrypto/test/README.md)
 
 ### Frontend testing (Incompleted)
 
