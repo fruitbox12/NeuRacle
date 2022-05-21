@@ -45,7 +45,7 @@ Components = Components.
 
 ![](gitbash.PNG)
 
-Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle.git`
+Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle`
 
 ### Backend quick testing
 
