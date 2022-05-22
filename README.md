@@ -13,7 +13,7 @@ Most traditional Oracle recent day come to the same [problems](https://encyclope
 
 ## From Oracle to Distributed Ledger Technology
 
-Because the Oracle trilemma is almost the same as blockchain trilemma, [choose a blockchain solution as an oracle solution](https://medium.com/@jameslee777/decentralized-trustless-oracles-dto-by-piggybacking-on-timestamp-consensus-rules-2adce34d67b6) will be an innovated approach. There already some oracle that are using this approach to challenge the Oracle Trilemma, eg: [Komodo Trustless Oracles](https://komodoplatform.com/en/blog/the-promise-of-smart-contracts-and-the-oracle-problem/).
+Because the Oracle trilemma is almost the same as blockchain trilemma, [choose a blockchain solution as an oracle solution](https://medium.com/@jameslee777/decentralized-trustless-oracles-dto-by-piggybacking-on-timestamp-consensus-rules-2adce34d67b6) will be an innovated approach. There already some oracles that are using this approach to challenge the Oracle Trilemma, eg: [Komodo Trustless Oracles](https://komodoplatform.com/en/blog/the-promise-of-smart-contracts-and-the-oracle-problem/).
 
 Though, blockchain can't solve it's own trilemma.
 
