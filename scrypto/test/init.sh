@@ -70,3 +70,4 @@ let "epoch %= $RANGE"
 logc "Set random current epoch in range 500:" $epoch
 resim set-current-epoch $epoch
 
+

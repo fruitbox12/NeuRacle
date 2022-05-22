@@ -4,7 +4,7 @@ import './App.css'
 import { ManifestBuilder } from 'pte-sdk'
 import { getAccountAddress, signTransaction} from 'pte-browser-extension-sdk'
 import Notiflix from 'notiflix'
-import { TESTER, ADMINBADGE, PACKAGE, NAR, COMPONENT, VALIDATOR_BADGE, USER_BADGE } from './NEURACLE'
+import { TESTER, ADMINBADGE, PACKAGE, NEURA, COMPONENT, VALIDATOR_BADGE, USER_BADGE, MINT_CONTROLLER_BADGE, CONTROLLER_BADGE} from './NEURACLE'
 
 function App() {
   const [accountAddress, setAccountAddress] = useState<string>('')
@@ -145,8 +145,10 @@ function App() {
 
   function Role_button() {
     if (yourRole == 'NeuRacle Admin') {
-      return <div><br/>
-        <button type="button" onClick={assign_validators}>
+      return <div style={{ border: '3px solid lightgreen', padding: '20px', margin: '20px auto', textAlign: 'center' }}><a style={{color: 'lightblue'}}>ROLE BUTTON</a><br/><div style={{lineHeight: '10px'}}><br/></div>
+      <button type="button" onClick={instantiate_new_neuracle}>
+          Instantiate new NeuRacle
+        </button><br/><div style={{lineHeight: '10px'}}><br/></div><button type="button" onClick={assign_validators}>
           Assign a validator
         </button>
       </div>
@@ -155,16 +157,16 @@ function App() {
     //   return <div><br/>
     //     <button type="button" onClick={function () { }}>
     //       Change fee
-    //     </button> | <button type="button" onClick={function () { }}>
+    //     </button><br/><button type="button" onClick={function () { }}>
     //       Withdraw fee
     //     </button>
     //   </div>
     // }
     else if (yourRole == 'TESTER') {
-      return <div><br/><button type="button" onClick={publish_package}>
-        Publish package
-      </button> | <button type="button" onClick={become_admin}>
-          Become NeuRacle Admin
+      return <div style={{ border: '3px solid lightgreen', padding: '20px', margin: '20px auto', textAlign: 'center' }}><a style={{color: 'lightblue'}}>ROLE BUTTON</a><br/><div style={{lineHeight: '10px'}}><br/></div><button type="button" onClick={publish_package}>
+          Publish package
+      </button><br/><div style={{lineHeight: '10px'}}><br/></div><button type="button" onClick={new_token}>
+          Create new NeuRacle medium token
         </button></div>
     }
     else return null
@@ -222,7 +224,7 @@ function App() {
           const my_resource = component.owned_resources
 
           const token_nar = my_resource.find((resource: { resource_address: string} ) => {
-            return resource.resource_address === NAR
+            return resource.resource_address === NEURA
           })
 
           if (token_nar) {
@@ -261,7 +263,8 @@ function App() {
 
               const user_info = await get_nft_data(x, USER_BADGE)
 
-              const response = await fetch(user_info[0], {method: 'GET'})
+              try {
+                const response = await fetch(user_info[0], {method: 'GET'})
 
               if (response.ok) {
 
@@ -273,10 +276,16 @@ function App() {
 
               } else {
 
-                user_info.push("Your data is inaccessible", x)
-                continue
+                user_info.push("This data source is inaccessible", x)
+                
               }
-              
+
+              } catch {
+
+                user_info.push("This data source is inaccessible", x)
+
+              }
+
             user_infos.push(user_info)
 
             }
@@ -313,7 +322,7 @@ function App() {
   
               })
   
-              const staked_amount = parseNonFungibleId[idx + 1].value.replace(/^\D+|\D+$/g, "");
+              const staked_amount = parseNonFungibleId[idx + 1].value.replace(/^\D+|\D+$/g, "")
 
               staker_info.push(staked_amount)
   
@@ -331,7 +340,7 @@ function App() {
 
   async function publish_package() {
 
-    const response = await fetch('./neu_racle.wasm');
+    const response = await fetch('./neuracle.wasm');
     const wasm = new Uint8Array(await response.arrayBuffer());
 
     const manifest = new ManifestBuilder()
@@ -343,19 +352,46 @@ function App() {
   
     const newpack: string = receipt.newPackages[0];
     success("Done!");
-    info("Change the value", "New package address: " + newpack + ". " + "\nPlease add this on NEURACLE.tsx");
+    info("Change the value", "New package address: " + newpack + ". " + "\nPlease add this on NEURACLE.tsx")
     setRefresh(true);
     
   }
-  async function become_admin() {
 
+  async function new_token() {
     const manifest = new ManifestBuilder()
-      .callFunction(PACKAGE, 'NeuRacle', 'new', ['100u32', '1u64', 'Decimal("1")', 'Decimal("0.3")', '500u64', 'Decimal("0.0015")', 'Decimal("10")'])
+      .callFunction(PACKAGE, 'NeuraToken', 'new_token', ['"Neura"', '"NAR"', 'Decimal("10000000")', '18u8'])
       .callMethodWithAllResources(accountAddress!, 'deposit_batch')
       .build()
-      .toString();
+      .toString()
 
-    const receipt = await signTransaction(manifest);
+    const receipt = await signTransaction(manifest)
+
+    let log = ''
+    for (const x of receipt.logs) {
+      log += x + '. '
+    }
+ 
+    if (receipt.status == 'Success') {
+      success("Done!")
+      info("Change the value", 'You have created new NeuRacle medium token, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file. ' + log)
+    }
+    else {
+      failure_big("Failed", "Please try again: " + receipt.status)
+    }
+    setRefresh(true);
+  }
+
+  async function instantiate_new_neuracle() {
+
+    const manifest = new ManifestBuilder()
+      .withdrawFromAccountByAmount(accountAddress!, 1, MINT_CONTROLLER_BADGE)
+      .takeFromWorktop(MINT_CONTROLLER_BADGE, 'mint_badge')
+      .callFunction(PACKAGE, 'NeuRacle', 'new', [`ResourceAddress("${NEURA}")`, `ResourceAddress("${ADMINBADGE}")`, 'Bucket("mint_badge")', `ResourceAddress("${CONTROLLER_BADGE}")`, '100u32', '1u64', 'Decimal("1")', 'Decimal("0.3")', '500u64', 'Decimal("0.0015")', 'Decimal("10")'])
+      .callMethodWithAllResources(accountAddress!, 'deposit_batch')
+      .build()
+      .toString()
+
+    const receipt = await signTransaction(manifest)
 
     var log = '\n'
 
@@ -365,7 +401,7 @@ function App() {
  
     if (receipt.status == 'Success') {
       success("Done!");
-      info("Change the value", 'You have become NeuRacle Admin, please check your wallet detail in Pouch. You must edit the NEURACLE.tsx file. ' + log)
+      info("Change the value", 'You have instantiated new NeuRacle Component. You must edit the NEURACLE.tsx file. ' + log)
     }
     else {
       failure_big("Failed", "Please try again: " + receipt.logs.toString())
@@ -446,8 +482,8 @@ function App() {
           return
         } else {
           const manifest = new ManifestBuilder()
-          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
-          .takeFromWorktop(NAR, 'bucket')
+          .withdrawFromAccountByAmount(accountAddress!, amount, NEURA)
+          .takeFromWorktop(NEURA, 'bucket')
           .callMethod(COMPONENT, 'become_new_user', [`Bucket("bucket") "${result}"`])
           .callMethodWithAllResources(accountAddress!, 'deposit_batch')
           .build()
@@ -476,8 +512,8 @@ function App() {
       } else {
         const amount: number = parseFloat(result);
         const manifest = new ManifestBuilder()
-          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
-          .takeFromWorktop(NAR, 'bucket')
+          .withdrawFromAccountByAmount(accountAddress!, amount, NEURA)
+          .takeFromWorktop(NEURA, 'bucket')
           .callMethod(validator!, 'stake', ['Bucket("bucket")'])
           .callMethodWithAllResources(accountAddress!, 'deposit_batch')
           .build()
@@ -501,8 +537,8 @@ function App() {
       } else {
         const amount: number = parseFloat(result);
         const manifest = new ManifestBuilder()
-          .withdrawFromAccountByAmount(accountAddress!, amount, NAR)
-          .takeFromWorktop(NAR, 'bucket')
+          .withdrawFromAccountByAmount(accountAddress!, amount, NEURA)
+          .takeFromWorktop(NEURA, 'bucket')
           .withdrawFromAccountByAmount(accountAddress!, 1, stakerBadge!)
           .takeFromWorktop(stakerBadge!, 'bucket1')
           .callMethod(validator!, 'add_stake', ['Bucket("bucket") Bucket("bucket1")'])

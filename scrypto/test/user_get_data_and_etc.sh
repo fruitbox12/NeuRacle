@@ -22,13 +22,12 @@ resim call-method $COMP get_data 1,$USER_BADGE
 resim set-default-account $USER5_ACC $USER5_PIV
 resim call-method $COMP get_data 1,$USER_BADGE
 
-logc "A person try to call new round again within round-length time."
-logr "This should show error!"
+logr "A person try to call new round again within round-length time. This should show error!"
 
 resim run ./transaction_manifest/start_round || true
 
-logc "Advance epoch by 1."
-epoch=$(($epoch + 1))
+logc "Advance epoch by 1000."
+epoch=$(($epoch + 1000))
 resim set-current-epoch $epoch
 
 logg "That person call new round again."
@@ -39,8 +38,7 @@ export VALUP_ADDRESS=$VAL1_ADDRESS
 export VALUP_ACC=$VAL1_ACC
 resim run ./transaction_manifest/update_data
 
-logy "Only one validator is active, but that validator try to end the round."
-logr "This should show error!"
+logr "Only one validator is active, but that validator try to end the round. This should show error!"
 resim run ./transaction_manifest/end_round || true
 
 resim set-default-account $VAL2_ACC $VAL2_PIV
@@ -61,8 +59,7 @@ resim run ./transaction_manifest/update_data_malicious
 logg "Now 4/5 validator voted, someone try to end the round."
 resim run ./transaction_manifest/end_round
 
-logc "User try to get data after out of time."
-logr "This should show error!"
+logr "User try to get data after out of time. This should show error!"
 resim set-default-account $USER2_ACC $USER2_PIV
 resim call-method $COMP get_data 1,$USER_BADGE || true
 

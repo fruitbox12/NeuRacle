@@ -1,7 +1,14 @@
-//! [Neura Stable coin] blueprint is the blueprint for creating native stable coin project of NeuRacle ecosystem.
+//! [NStableCoin] is the blueprint for creating native stable coin project of NeuRacle ecosystem.
 //! User can use this blueprint for swapping into algorithmed stablecoin.
+//! 
 //! Other individuals, teams can also utilize this blueprint to create "stable value" for their own token by get a Neuracle user badge and feed that on the input arguments.
-//! Eg: Ociswap can buy a Neuracle user badge and use this blueprint to make their OCI token both a DEX medium and a stable coin medium.
+//! 
+//! Eg: Radix DLT can buy a Neuracle user badge and use this blueprint to make their Radix token both a smartcontract platform medium and a stable coin medium.
+//! 
+//! However this approach (same as [Luna](https://www.terra.money/)) has proven not viable. The stability of the coin will come at the cost of the medium token's inflation.
+//! Eg: When people swap to the stablecoin at the top price of xrd, they can swap again to xrd at the lower price, so they made money at the cost of xrd inflation.
+//! 
+//! Therefore, this blueprint is only for showing how NeuRacle data validation service can be of benefit to other DeFi projects.
 
 use scrypto::prelude::*;
 use crate::neuracle::NeuRacle;

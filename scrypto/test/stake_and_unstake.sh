@@ -37,7 +37,7 @@ resim run ./transaction_manifest/stake9
 resim set-default-account $USER5_ACC $USER5_PIV
 resim run ./transaction_manifest/stake10
 
-logc "Some Neura holders addstake, unstake, try stop unstake and withdraw in unstaking period."
+logc "Some Neura holders addstake, unstake, stop unstake"
 
 resim set-default-account $VAL4_ACC $VAL4_PIV
 resim run ./transaction_manifest/add_stake
@@ -59,7 +59,8 @@ resim run ./transaction_manifest/unstake3
 logy "Set current epoch + 23"
 epoch=$(($epoch + 23))
 resim set-current-epoch $epoch
-logr "This should show error!"
+
+logr "This user try to withdraw in unstaking period. This should show error!"
 resim run ./transaction_manifest/withdraw || true
 
 logy "Set current epoch + 500"

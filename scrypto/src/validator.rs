@@ -1,5 +1,6 @@
-//! [Validator] blueprint is the blueprint to create new validator for NeuRacle ecosystem.
-//! User can also stake to, or unstake, withdraw from validators through this blueprint.
+//! [Validator] is the blueprint to create new validator for NeuRacle ecosystem.
+//! User can stake to, or unstake, withdraw from validators through this blueprint.
+//! 
 //! Other PoS projects can also utilize this blueprint to build staking, voting mechanisms.
 
 use scrypto::prelude::*;
@@ -61,7 +62,7 @@ blueprint! {
                 .initial_supply(dec!("1"));
 
             let staker_badge = ResourceBuilder::new_non_fungible()
-                .metadata("name", "NeuRacle staker Badge")
+                .metadata("name", name.clone() + "Validator staker Badge")
                 .mintable(rule!(require(controller_badge.resource_address())), LOCKED)
                 .burnable(rule!(require(controller_badge.resource_address())), LOCKED)
                 .updateable_non_fungible_data(rule!(require(controller_badge.resource_address())), LOCKED)
@@ -98,7 +99,7 @@ blueprint! {
                 .globalize();
     
             info!("{} Validator Address: {}", name.clone(), component);
-            info!("{} Staker Badge: {}", name, staker_badge);
+            info!("{} Validator Staker Badge: {}", name, staker_badge);
             return component
             
         }

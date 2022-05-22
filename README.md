@@ -62,12 +62,16 @@ Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle`
 2. Testing the local environment: `npm run dev`
 3. Go to the variable environment file, delete all current variable and enter your wallet address on "TESTER=''": `./src/NEURACLE.tsx`
 4. Back on the page, try publish package and become NeuRacle Admin, follow any instruction that prompt up. (After publish the package you should delete it immediately or it would cause lagging) 
-5. Now you have become NeuRacle Admin, you can assign another address as validator, or change into other account and become user to try the UI and staking mechanism.
+5. Now you have become NeuRacle Admin, you can assign another address as validator, or change into other account, become user or try the UI and staking mechanism.
 6. You can also try become an user with this api: http://worldclockapi.com/api/json/est/now
 
 *Note: Current version of NeuRacle UI doesn't support multiple role at one account address, you should try other role in other account instead. You can send NAR token to other account via [pouch](https://plymth.github.io/pouch/).*
 
 ## System Explaination
+
+This prototype is made with most dynamicity so anyone can become NeuRacle service provider and create an "oracle value" for their token, even XRD.
+
+Projects using PoS Consensus can also make use of the [Validator](./scrypto/src/validator.rs) blueprint
 
 **Learn about NeuRacle prototype**: `cd scrypto && cargo doc --no-deps --document-private-items --open`
 
@@ -77,9 +81,7 @@ There are 5 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **Ne
 
 **Validators**, or Data Providers are the people that host NeuRacle Gateway off-chain and ensure the security, connectivity of the Gateway. 
 
-**NeuRacle Gateway** is a **decentralized off-chain entity** that will play role as a medium to automatically fetch data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf.
-
-NeuRacle will let users to choose data from any online source they want from, they can also choose on-chain aggregrated data but that will ofc more costly.
+**NeuRacle Gateway** is a **decentralized off-chain entity** that will play role as a medium to automatically read data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf.
 
 **Users** will have to take responsibility on the accessibility of sources. The data source can be public, or private data. User will have to provide an online and accessible API (and key, if that's a private data) to the NeuRacle Gateway. NeuRacle will also help user to choose (or host) an API that return the exact data user want, **but will not buy the data on user's behalf**.
 
@@ -87,13 +89,15 @@ To help the Gateway feedback the precise data that users need, the data source A
 
 After make a request, users can fetch on-chain data through NeuRacle component, if it deemed non-accessible, users will only receive blank data.
 
-User make request for data from 1 source will have to provide NER token. The more they provide, the longer they can get validated data. All NER token used will be burn.
+User make request for data from 1 source will have to provide neuracle token. The more they provide, the longer they can get validated data. All neuracle token used will be burn.
 
-**NeuRacle Storage** is an off-chain cloud service that do data extracting, parsing, web scraping and host those data on user demand. Those data can only be extracted by NeuRacle Gateway or the user that demanded the data for monitor purpose. The data can also be public per that user request.
+NeuRacle will let users to choose data from any online source they want from.
+
+**NeuRacle Storage** is an off-chain cloud service that do data extracting, parsing, web scraping and hosting on user demand. Those data can only be extracted by NeuRacle Gateway or the user demanded that data for monitor purpose. The data can also be public per user request.
 
 NeuRacle Storage exist for users that can't point to the exact data source they need or can't host the data on their own.
 
-NeruRacle Storage can also be a distributed system for more security.
+NeuRacle Storage can also be a distributed system for more security.
 
 **NeuRacle's Native Projects** are the projects that's built through NeuRacle blueprint (Eg: USDN stable coin project on the prototype showcase) or other projects that:
 
@@ -115,7 +119,7 @@ This won't just stay on crypto world, on real world too, different address, loca
 
 Providers, sellers can also use NeuRacle service to feed their product's price data on-chain and sell NFT proof of owning the product on DeFi market when they **don't even need to know about their buyer**. The product can be any thing like real estate, gold, diamond, or even daily grocery,.. 
 
-Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). User can also buy that data and make a data feeding request on NeuRacle.
+Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). Therefore, user can buy that data and make a data feeding request on NeuRacle.
 
 ### Why don't just use those off-chain decentralized data.
 
@@ -139,9 +143,9 @@ Round length is the limited time between each data validation round. Data can be
 
 Because this time unit is unstable occasionally, the stability of data stream will have to depend on Admin monitor.
 
-Beside data sources, NeuRacle Gateway also have to keep track of the Radix Ledger new history to see if the new NeuRacle round started or not.
+Beside data sources, NeuRacle Gateway also have to keep track of the NeuRacle component state to see if new round has started or not.
 
-NeuRacle Gateway will update data on Validators behalf right after round start. After update, the validator will deemed active in that round.
+Right after round start, NeuRacle Gateway will update data on Validators behalf. After update, the validator will deemed active in that round.
 
 Round concluded requirement is >2/3 active validators.
 
@@ -153,6 +157,8 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 **Single point of failure**: The data feeding system is decentralized, there is no single point of failure. 
 
+**Slow finality after Cerberus**: With Cerberus where all validators can make data feed transactions in parallel, as long as NeuRacle has >2/3 truthful validators with required network hosting performance, datas will be finalized right after round start.
+
 ### What bad things might happend on NeuRacle?
 
 **Security, Liveness Break**: NeuRacle has the same Sybil Resistance as Radix Network, malicious entities will need >1/3 staked value to break liveness, >2/3 staked value to really conduct a meaningful attack. Based on game-theory, that attack will really hard and costly. With sharded NeuRacle, the validator sets, as well as the data sources they may validate in the next round will all be randomized, make an attack become almost impossible.
@@ -162,6 +168,8 @@ Datas with >2/3 staked weight of that round will also be validated.
 Although such a bad thing might happen on NeuRacle, it wouldn't be a critical problem of an Oracle. Unstable data updating time won't affect most Oracle usecase as long as the data is frequently updated. However, the data might be delayed more than tolerance and break liveness, lead to other *critical problem* might happened on NeuRacle. (check *Congested Network*)
 
 **Congested Network**: If Radix Network ever become congested, all the DeFi system will be delayed, not only NeuRacle. User is recommended to cease on-chain activity on such an event and wait for the system to cool down.
+
+**Slow finality before Cerberus**: As explained above, before Radix network is fully sharded, validators has to make data feed transactions in sequence.
 
 ### Can NeuRacle do VRF?
 

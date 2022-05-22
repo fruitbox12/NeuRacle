@@ -1,5 +1,13 @@
-//! [NeuRacle] on-chain governance blueprint is the core blueprint of NeuRacle.
+//! [NeuRacle] is the core on-chain governance blueprint of NeuRacle.
 //! NeuRacle L2 ecosystem or any third-party NeuRacle service user will have to fetch data through this blueprint.
+//! 
+//! Any token can become NeuRacle medium. However, become Neuracle medium require mint-burn authority of that token and will affect token-economic a lot.
+//! Therefore, choosing inital payrate, reward, punishment rate will be a critical point.
+//! 
+//! Personally, I also don't recommend having these rate changable since that will come at the cost of community trust.
+//! 
+//! P/s: Because NeuRacle has almost the same Consensus model as Radix, Radix token can easily become NeuRacle service provider by just utilize it's current decentralized consensus network.
+//! This mean beside validating transaction, Radix validator can also participate on data feeding and create more utility for Radix token.
 
 use scrypto::prelude::*;
 use crate::neura_stable_coin::NStableCoin;
@@ -72,68 +80,50 @@ blueprint! {
     impl NeuRacle {
 
         ///The output is NeuRacle Component address, initial Neura token bucket and the admin badge.
-        pub fn new(validator_cap: usize, round_length: u64, pay_rate: Decimal, fee_stablecoin: Decimal, unstake_delay: u64, reward_rate: Decimal, punishment: Decimal) -> (ComponentAddress, Bucket, Bucket) {
+        pub fn new(
+            medium_token: ResourceAddress, 
+            admin_badge: ResourceAddress, 
+            mint_controller_badge: Bucket, 
+            controller_badge: ResourceAddress, 
+            validator_cap: usize, round_length: u64, 
+            pay_rate: Decimal, fee_stablecoin: Decimal, 
+            unstake_delay: u64, reward_rate: Decimal, 
+            punishment: Decimal) -> ComponentAddress {
 
             let system_time = Runtime::current_epoch() / round_length;
 
             assert_fee(fee_stablecoin);
 
-            let admin_badge = ResourceBuilder::new_fungible()
-                .divisibility(DIVISIBILITY_NONE)
-                .metadata("name", "NeuRacle Admin Badge")
-                .initial_supply(dec!("1"));
+            let controller_badge_new = mint_controller_badge.authorize(|| {
+                borrow_resource_manager!(controller_badge)
+                .mint(dec!("1"))
+            });
 
-                info!(
-                    "Admin badge address: {}", admin_badge.resource_address()
-                );
-
-            let mint_controller_badge = ResourceBuilder::new_fungible()
-                .metadata("name", "NeuRacle Controller Badge")
-                .initial_supply(dec!("1"));
-
-            let controller_badge = ResourceBuilder::new_fungible()
-                .mintable(rule!(require(mint_controller_badge.resource_address())), LOCKED)
-                .metadata("name", "NeuRacle Controller Badge")
-                .initial_supply(dec!("1"));
-
-             let validator_badge = ResourceBuilder::new_non_fungible()
+            let validator_badge = ResourceBuilder::new_non_fungible()
                 .metadata("name", "NeuRacle Validator Badge")
-                .mintable(rule!(require(controller_badge.resource_address())), LOCKED)
-                .burnable(rule!(require(controller_badge.resource_address())), LOCKED)
-                .updateable_non_fungible_data(rule!(require(controller_badge.resource_address())), LOCKED)
+                .mintable(rule!(require(controller_badge)), LOCKED)
+                .burnable(rule!(require(controller_badge)), LOCKED)
+                .updateable_non_fungible_data(rule!(require(controller_badge)), LOCKED)
                 .no_initial_supply();
             
                 info!("Validator badge address: {}", validator_badge);
 
             let user_badge = ResourceBuilder::new_non_fungible()
                 .metadata("name", "NeuRacle User Badge")
-                .mintable(rule!(require(controller_badge.resource_address())), LOCKED)
-                .burnable(rule!(require(controller_badge.resource_address())), LOCKED)
-                .updateable_non_fungible_data(rule!(require(controller_badge.resource_address())), LOCKED)
+                .mintable(rule!(require(controller_badge)), LOCKED)
+                .burnable(rule!(require(controller_badge)), LOCKED)
+                .updateable_non_fungible_data(rule!(require(controller_badge)), LOCKED)
                 .no_initial_supply();
 
                 info!("User badge: {}", user_badge);
 
-            //We can have many strategy to decentralize the token like vesting, airdrop, locking,... 
-            //but let's just focus on NeuRacle main system for now.
-            let neura = ResourceBuilder::new_fungible()
-                .divisibility(DIVISIBILITY_MAXIMUM)
-                .metadata("name", "NeuRacle")
-                .metadata("symbol", "NAR")
-                .updateable_metadata(rule!(require(admin_badge.resource_address())), MUTABLE(rule!(require(admin_badge.resource_address()))))
-                .mintable(rule!(require(controller_badge.resource_address())), LOCKED)
-                .burnable(rule!(require(controller_badge.resource_address())), LOCKED)
-                .initial_supply(dec!("10000000"));
-
-                info!("Neura: {}", neura.resource_address());
-
             let rules = AccessRules::new()
-                .method("create_new_validator_node", rule!(require(admin_badge.resource_address())))
-                .method("advance_stage", rule!(require(admin_badge.resource_address())))
-                .method("set_unstake_delay", rule!(require(admin_badge.resource_address())))
-                .method("new_stable_coin_project", rule!(require(admin_badge.resource_address())))
-                .method("set_round_length", rule!(require(admin_badge.resource_address())))
-                .method("new_api", rule!(require(controller_badge.resource_address())))
+                .method("create_new_validator_node", rule!(require(admin_badge)))
+                .method("advance_stage", rule!(require(admin_badge)))
+                .method("set_unstake_delay", rule!(require(admin_badge)))
+                .method("new_stable_coin_project", rule!(require(admin_badge)))
+                .method("set_round_length", rule!(require(admin_badge)))
+                .method("new_api", rule!(require(controller_badge)))
                 .default(rule!(allow_all));
 
             let component = Self {
@@ -141,9 +131,9 @@ blueprint! {
                 stable_coins: LazyMap::new(),
                 validators: Vec::new(),
                 validator_cap: validator_cap,
-                controller_badge: Vault::with_bucket(controller_badge),
-                neura_vault: Vault::new(neura.resource_address()),
-                neura: neura.resource_address(),
+                controller_badge: Vault::with_bucket(controller_badge_new),
+                neura_vault: Vault::new(medium_token),
+                neura: medium_token,
                 validator_badge: validator_badge,
                 user_badge: user_badge,
                 pay_rate: pay_rate,
@@ -166,7 +156,7 @@ blueprint! {
                 "Component: {}", component
             );
 
-            return (component, admin_badge, neura)
+            return component
         }
 
         ///At first, to prevent Sybil attack, NeuRacle also need to use DPoS mechanism and choose only Validators that has the basic requirement of network traffic and security.
@@ -179,7 +169,7 @@ blueprint! {
             let mut badge = self.controller_badge.authorize(|| {
                 borrow_resource_manager!(self.validator_badge)
                 .mint_non_fungible(&validator_id, ValidatorData{
-                    name: name.clone(),
+                    name: name.clone(), 
                     location: location,
                     website: website,
                     address: String::default()
@@ -321,6 +311,7 @@ blueprint! {
         /// This method will check the staking weight of each validator, set their round start status (so they're able to update data), and reset their active status.
         /// On stage 1, this method will also eliminate all validators that aren't on top 100 staking weight.
         /// The method can only be called after 1 "round length" of last round end time.
+        /// The person who call new round will be rewarded a payrate amount.
         pub fn new_round(&mut self) -> Bucket {
             
             assert!(
@@ -351,7 +342,7 @@ blueprint! {
             info!("Start voting round number {} of NeuRacle", self.system_time);
 
             let reward = self.controller_badge.authorize(|| {
-                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("2"))
+                borrow_resource_manager!(self.neura).mint(self.pay_rate)
             });
 
             info!("You are rewarded {} NAR for start a NeuRacle round", reward.amount());
@@ -382,6 +373,7 @@ blueprint! {
         /// This method will check on the active status of validators and can only advance if >2/3 validator is active.
         /// After that, this method will get the datas with the most weight, check if it > 2/3 vote weight,
         /// feed that on NeuRacle, reward the validators provided same datas and punish those didn't.
+        /// The person who end a round will be rewarded 2 times payrate (Because calling this method is more costly on xrd fee than start a round)
         pub fn end_round(&mut self) -> Bucket {
             
             assert!(
@@ -452,7 +444,7 @@ blueprint! {
             self.round_start = false;
 
             let reward = self.controller_badge.authorize(|| {
-                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("4"))
+                borrow_resource_manager!(self.neura).mint(self.pay_rate*dec!("2"))
             });
 
             info!("You are rewarded {} NAR for ending a NeuRacle round", reward.amount());
