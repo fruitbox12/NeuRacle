@@ -157,7 +157,7 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 **Single point of failure**: The data feeding system is decentralized, there is no single point of failure. 
 
-**Slow finality after Cerberus**: With Cerberus where all validators can make data feed transactions in parallel, as long as NeuRacle has >2/3 truthful validators with required network hosting performance, datas will be finalized right after round start.
+**Slow finality after Cerberus**: With Cerberus, all validators can make data feed transactions in parallel. Therefore, as long as NeuRacle has >2/3 truthful validators with required network hosting performance, datas will be finalized right after round start.
 
 ### What bad things might happend on NeuRacle?
 
