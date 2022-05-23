@@ -17,6 +17,7 @@
 `. data_refresh_round.sh` set an example of a person calling, concluding a data feeding round. (Actually anyone can call or conclude the round, you can change [./transaction_manifest/end_round](./transaction_manifest/end_round) and [./transaction_manifest/start_round](./transaction_manifest/start_round) to try)
 
 `. staked_amount_before_and_after.sh` show the staker account changes after a round. 
+
 `. update_data.sh` set an example of 1 validator inactive, 1 validator have untruthful behavior on total 5 validators. This will also use a prototype of NeuRacle Gateway
 
 `. stable_coin.sh` set an example of instantiate a native algorithmed stablecoin project pegged stablecoin USDN to USD on XRD/USD rate. (just use XRD as an example)
