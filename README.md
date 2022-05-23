@@ -119,7 +119,7 @@ Providers, sellers can also use NeuRacle service to feed their product's price d
 
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). Therefore, user can buy that data and make a data feeding request on NeuRacle.
 
-### Why don't just use those off-chain decentralized data.
+### Why don't just use those off-chain decentralized data?
 
 To feed any off-chain data, the oracle still need to rely on "a trusted bridge" or "a trusted medium", lead to a single point of failure, eg: [Ronin bridge](https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack). However, NeuRacle use a large set of validators to ensure decentralized, trustless data feeding.
 
