@@ -1,5 +1,5 @@
 //! [NeuRacle] is the core on-chain governance blueprint of NeuRacle.
-//! NeuRacle L2 ecosystem or any third-party NeuRacle service user will have to fetch data through this blueprint.
+//! NeuRacle's native projects or any third-party NeuRacle service user will have to fetch data through this blueprint.
 //! 
 //! Any token can become NeuRacle medium. However, become Neuracle medium require mint-burn authority of that token and will affect token-economic a lot.
 //! Therefore, choosing inital payrate, reward, punishment rate will be a critical point.
