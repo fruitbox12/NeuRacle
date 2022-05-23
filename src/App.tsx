@@ -46,10 +46,11 @@ function App() {
       return <div><button type="button" onClick={async function () {
 
         const Valid = prompt("Validator Address");
-
-        if (Valid == null) {return}
+        Notiflix.Loading.pulse();
+        if (Valid == null) {
+          Notiflix.Loading.remove();
+          return}
         else {
-          Notiflix.Loading.pulse();
           const response = await fetch(
 
             `https://pte01.radixdlt.com/component/${COMPONENT}`
@@ -58,7 +59,7 @@ function App() {
 
           const parseData = await response.json()
 
-          const parseValidatorAddress = JSON.parse(parseData.state).fields[3].elements
+          const parseValidatorAddress = JSON.parse(parseData.state).fields[2].elements
 
           const result = parseValidatorAddress.find((x: { elements: { value: string }[] }): boolean => x.elements[0].value === `ComponentAddress(\"${Valid}\")`)
 
@@ -714,7 +715,7 @@ function App() {
         <div >
           <Show_info />
         </div>
-        <button type="button" onClick={() => { setRefresh(true)}}>
+        <button type="button" onClick={() => { setShowStaker(false); setRefresh(true)}}>
           Refresh your data
         </button>
         <div>
