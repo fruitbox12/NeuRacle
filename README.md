@@ -157,9 +157,9 @@ There can be some other approach in how to operate the data-feeding round like c
 - On voting phase, NeuRacle component will randomly choose a leader for that round, get that leader data and have validators vote on that data. The leader can be "random verified" by only choosing the middle validator that update NeuRacle datas in the stream of data validation transactions done at almost the same time.
 - On round conclude, NeuRacle component will compute the voting result, update data, share the reward and punish untruthful behaviors.
 
-Pros: Since the last approach will punish any validator that has even the slightly bit difference in data (might come from network delay), this approach will help those validators with low equipment to participate and get reward, further pushing decentralization. 
+**Pros**: Since the last approach will punish any validator that has even the slightly bit difference in data (might come from network delay), this approach will help those validators with low equipment to participate and get reward, further pushing decentralization. 
 
-Cons: Since this approach help the validator with low equipment, it will somehow affect security. This approach also contain an extra voting phase in a data-feeding round, make a round more fee costly and create more room for bugs, exploits and malicious behaviors.
+**Cons**: Since this approach help the validator with low equipment, it will somehow affect security. This approach also contain an extra voting phase in a data-feeding round, make a round more fee costly and create more room for bugs, exploits and malicious behaviors.
 
 ## Security, Utility
 
