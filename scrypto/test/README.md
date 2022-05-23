@@ -20,7 +20,7 @@
 
 `. update_data.sh` set an example of 1 validator inactive, 1 validator have untruthful behavior on total 5 validators. This will also use a prototype of NeuRacle Gateway
 
-`. stable_coin.sh` set an example of instantiate a native algorithmed stablecoin project pegged stablecoin USDN to USD on XRD/USD rate. (just use XRD as an example)
+`. stable_coin.sh` instantiate a native algorithmed stablecoin project that peg stablecoin USDN to USD on XRD/USD rate. (just use XRD as an example)
 
 `. stable_coin_swap.sh` set an example of the stablecoin project use NeuRacle to swap between NAR and USDN on current XRD/USD coingecko aggregrated rate.
 
