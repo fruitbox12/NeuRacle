@@ -62,7 +62,7 @@ Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle`
 2. Testing the local environment: `npm run dev`
 3. Go to the variable environment file, delete all current variable and enter your wallet address on "TESTER=''": `./src/NEURACLE.tsx`
 4. Back on the page, try publish package and become NeuRacle Admin, follow any instruction that prompt up. (After publish the package you should delete it immediately or it would cause lagging) 
-5. Now you have become NeuRacle Admin, you can assign another address as validator, or change into other account, become user or try the UI and staking mechanism.
+5. Now you have become NeuRacle Admin, you can assign another address as validator, or change into other account, become user, try the UI and staking mechanism.
 6. You can also try become an user with this api: http://worldclockapi.com/api/json/est/now
 
 *Note: Current version of NeuRacle UI doesn't support multiple role at one account address, you should try other role in other account instead. You can send NAR token to other account via [pouch](https://plymth.github.io/pouch/).*
