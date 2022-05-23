@@ -91,8 +91,6 @@ After make a request, users can fetch on-chain data through NeuRacle component, 
 
 User make request for data from 1 source will have to provide neuracle token. The more they provide, the longer they can get validated data. All neuracle token used will be burn.
 
-NeuRacle will let users to choose data from any online source they want from.
-
 **NeuRacle Storage** is an off-chain cloud service that do data extracting, parsing, web scraping and hosting on user demand. Those data can only be extracted by NeuRacle Gateway or the user demanded that data for monitor purpose. The data can also be public per user request.
 
 NeuRacle Storage exist for users that can't point to the exact data source they need or can't host the data on their own.
