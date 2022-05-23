@@ -125,6 +125,18 @@ To feed any off-chain data, the oracle still need to rely on "a trusted bridge" 
 
 For a simple showcase, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting.
 
+### User incentive program.
+
+- To further promote the use of NeuRacle services and prevent re-routing of NeuRacle datas, we introduce the **User incentive program**. *A percent* of user's payment who demanded same data sources as previous data users will came back to those previous users. The reward will be distributed by the amount which previous users has paid (The more you paid, the more you got reward for the next payment of same data source).
+
+- The *incentive percent* will be a hard choice for NeuRacle operator, since if that too much (specifically >=50%), users can just create new account and get those data for free or reduced price (since most of their payment go back to their other account). Or if it too little, it won't be much of an incentive and can't prevent re-routing of NeuRacle datas.
+
+- Undoubtedly, the *incentive percent* is the minimum threshold in which third-party will re-route NeuRacle datas make their user has to pay (based on game-theory). And as the consequence, those third-party also won't have any method to prevent their user won't do the same. In the end, third data market competetion will just destroy themselves and come back to NeuRacle (The loop will make them reduce their data price to the minimum threshold).
+
+- That's only possible with a non-zero incentive program. As long as the third-party can get benefit from re-routing the data, they will continue to do so.
+
+- Still, the incentive program cannot prevent "self-less third-party" whose "not play the game-theory".
+
 ### Data refreshing round
 
 Anyone can choose a validator to stake, receive reward based on that validator contribution to the network. The Sybil Resistance mechanism worked the same as Radix Network.
