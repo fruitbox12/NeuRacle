@@ -157,7 +157,7 @@ Datas with >2/3 staked weight of that round will also be validated.
 
 **Single point of failure**: The data feeding system is decentralized, there is no single point of failure. 
 
-**Slow finality after Cerberus**: With Cerberus, all validators can make data feed transactions in parallel. Therefore, as long as NeuRacle has >2/3 truthful validators with required network hosting performance, datas will be finalized right after round start.
+**Slow finality after sharded Cerberus**: With fully sharded Cerberus, all validators can make data feed transactions in parallel. Therefore, as long as NeuRacle has >2/3 truthful validators with required network hosting performance, datas will be finalized right after round start.
 
 ### What bad things might happend on NeuRacle?
 
@@ -169,7 +169,7 @@ Although such a bad thing might happen on NeuRacle, it wouldn't be a critical pr
 
 **Congested Network**: If Radix Network ever become congested, all the DeFi system will be delayed, not only NeuRacle. User is recommended to cease on-chain activity on such an event and wait for the system to cool down.
 
-**Slow finality before Cerberus**: As explained above, before Radix network is fully sharded, validators has to make data feed transactions in sequence.
+**Slow finality before sharded Cerberus**: As explained above, before Radix network is fully sharded, validators has to make data feed transactions in sequence.
 
 ### Can NeuRacle do VRF?
 
