@@ -105,6 +105,48 @@ NeuRacle Storage can also be a distributed system for more security.
 
 Native Projects on NeuRacle ecosystem will receive a badge to freely fetch validated data on-chain.
 
+### User Incentive Program
+
+To further promote the use of NeuRacle services and prevent re-routing of NeuRacle datas, we introduce the **User Incentive Program**. *A percent* of user's payment who demanded same data sources as previous data users will came back to those previous users. The reward will be distributed by the amount which previous users has paid (The more you paid, the more you got reward for the next payment of same data source).
+
+The *incentive percent* will be a hard choice for NeuRacle operator, since if that too much (specifically >=50%), users can just create new account and get those data for free or at reduced price (since most of their payment go back to their other account). Or if it too little, it won't be much of an incentive and can't prevent re-routing of NeuRacle datas.
+
+Undoubtedly, the *incentive percent* is the minimum threshold in which third-party will re-route NeuRacle datas make their user has to pay (based on game-theory). And as the consequence, those third-party also won't have any method to prevent their user won't do the same. In the end, third data market competetion will just destroy themselves and come back to NeuRacle (The loop will make them reduce their data price to the minimum threshold).
+
+That's only possible with a incentive program. As long as the third-party can get enough benefit from re-routing the data, they will continue to do so.
+
+### Delegated Proof of Stake
+
+Anyone can choose a validator to stake, receive reward based on that validator contribution to the network. The Sybil Resistance mechanism worked the same as Radix Network.
+
+PoS reward or punishment will happen on each data refreshing round.
+
+### Data refreshing round
+
+After every round, data will be refreshed, NAR token will also be minted to reward (or burned to punish) validators.
+
+The round call and call-off will run by a racing condition. The individual call (or call-off) a round will receive a reasonable reward. This incentive is to ensure that data valitation round will happen and concluded right after they passed requirement.
+
+Round call requirement is the round-length limited time.
+
+Current time unit of on-chain NeuRacle is transactions history or epoch length.
+
+Round length is the limited time between each data validation round. Data can be validated every 10tx, 100tx or 1epoch,...
+
+Because this time unit is unstable occasionally, the stability of data stream will have to depend on Admin monitor.
+
+Beside data sources, NeuRacle Gateway also have to keep track of the NeuRacle component state to see if new round has started or not.
+
+Right after round start, NeuRacle Gateway will update datas on Validators behalf. After update, the validator will deemed active in that round.
+
+Round concluded requirement is >2/3 active validators.
+
+Datas with >2/3 staked weight of that round will also be validated.
+
+**For a simple showcase**, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting. The prototype also won't use NeuRacle Storage or User Incentive Program.
+
+## Some thought about NeuRacle
+
 ### Why one source?
 
 Aggregrate data on-chain will be much more computation costly.
@@ -122,44 +164,6 @@ Off-chain identity can also do data aggregration and ensure some degree of decen
 ### Why don't just use those off-chain decentralized data?
 
 To feed any off-chain data, the oracle still need to rely on "a trusted bridge" or "a trusted medium", lead to a single point of failure, eg: [Ronin bridge](https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack). However, NeuRacle use a large set of validators to ensure decentralized, trustless data feeding.
-
-For a simple showcase, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting.
-
-### User incentive program.
-
-- To further promote the use of NeuRacle services and prevent re-routing of NeuRacle datas, we introduce the **User incentive program**. *A percent* of user's payment who demanded same data sources as previous data users will came back to those previous users. The reward will be distributed by the amount which previous users has paid (The more you paid, the more you got reward for the next payment of same data source).
-
-- The *incentive percent* will be a hard choice for NeuRacle operator, since if that too much (specifically >=50%), users can just create new account and get those data for free or reduced price (since most of their payment go back to their other account). Or if it too little, it won't be much of an incentive and can't prevent re-routing of NeuRacle datas.
-
-- Undoubtedly, the *incentive percent* is the minimum threshold in which third-party will re-route NeuRacle datas make their user has to pay (based on game-theory). And as the consequence, those third-party also won't have any method to prevent their user won't do the same. In the end, third data market competetion will just destroy themselves and come back to NeuRacle (The loop will make them reduce their data price to the minimum threshold).
-
-- That's only possible with a non-zero incentive program. As long as the third-party can get benefit from re-routing the data, they will continue to do so.
-
-- Still, the incentive program cannot prevent "self-less third-party" whose "not play the game-theory".
-
-### Data refreshing round
-
-Anyone can choose a validator to stake, receive reward based on that validator contribution to the network. The Sybil Resistance mechanism worked the same as Radix Network.
-
-After every round, data will be refreshed, NAR token will also be minted to reward (or burned to punish) validators.
-
-The round call and call-off will run by a racing condition. The individual call (or call-off) a round will receive a reasonable reward. This incentive is to ensure that data valitation round will happen and concluded right after they passed requirement.
-
-Round call requirement is the round-length limited time.
-
-Current time unit of on-chain NeuRacle is transactions history or epoch length.
-
-Round length is the limited time between each data validation round. Data can be validated every 10tx, 100tx or 1epoch,...
-
-Because this time unit is unstable occasionally, the stability of data stream will have to depend on Admin monitor.
-
-Beside data sources, NeuRacle Gateway also have to keep track of the NeuRacle component state to see if new round has started or not.
-
-Right after round start, NeuRacle Gateway will update data on Validators behalf. After update, the validator will deemed active in that round.
-
-Round concluded requirement is >2/3 active validators.
-
-Datas with >2/3 staked weight of that round will also be validated.
 
 ### Other approach
 
@@ -200,5 +204,7 @@ Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle 
 ## License 
 
 This work is licensed under MIT and Apache 2.0.
+
+*To complete this work, I has learned a lot from works of many other Radix community members. My best gratitude for [Clement](https://github.com/cbisaillon), [0xOmar](https://github.com/0xOmarA), [Devmannic](https://github.com/devmannic) and [Chris](https://github.com/plymth)*
 
 *I'm still an amateur on cryptography and distributed technology, this work may still contain something wrong or haven't taken into account. I'm glad to have any contributor to this work.*

@@ -73,7 +73,7 @@ blueprint! {
         /// Keep track of the active validators per round.
         active_validators: HashMap<ComponentAddress, Decimal>, 
         /// The badge to mint new NeuRacle ecosystem controller badge when new L2 project created.
-        mint_controller_badge: Vault, 
+        mint_controller_badge: Vault
 
     }
 
