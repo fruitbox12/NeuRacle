@@ -1,7 +1,7 @@
 //! [Validator] is the blueprint to create new validator for NeuRacle ecosystem.
 //! User can stake to, or unstake, withdraw from validators through this blueprint.
 //! 
-//! Other PoS projects can also utilize this blueprint to build staking, voting mechanisms.
+//! Other DPoS projects can also utilize this blueprint to build staking, voting mechanisms.
 
 use scrypto::prelude::*;
 use crate::utilities::*;
