@@ -2,11 +2,11 @@
 //! User can use this blueprint for swapping into algorithmed stablecoin.
 //! 
 //! Other individuals, teams can also utilize this blueprint to create "stable value" for their own token by getting a Neuracle user badge and feed that on the input arguments.
-//! Though, this blueprint haven't got a re-funding method for continue using oracle yet. 
 //!
 //! Eg: Radix DLT can buy a Neuracle user badge and use this blueprint to make their Radix token both a smartcontract platform medium and a stable coin medium.
-//! 
-//! However this approach (same as [Luna](https://www.terra.money/)) has proven not viable. The stability of the coin will come at the cost of the medium token's inflation.
+//! Though, this blueprint haven't got a re-funding method to continue using oracle yet. 
+//!
+//! However, this approach (same as [Luna](https://www.terra.money/)) has proven not viable. The stability of the coin will come at the cost of the medium token's inflation.
 //! Eg: When people swap to the stablecoin at the top price of xrd, they can swap again to xrd at the lower price, so they made money at the cost of xrd inflation.
 //! 
 //! Therefore, this blueprint is only for showing how NeuRacle data validation service can be of benefit to other DeFi projects.
