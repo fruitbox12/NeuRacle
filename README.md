@@ -149,6 +149,18 @@ Round concluded requirement is >2/3 active validators.
 
 Datas with >2/3 staked weight of that round will also be validated.
 
+### Other approach
+
+There can be some other approach in how to operate the data-feeding round like choosing leader and including vote mechanism (Same as Cerberus):
+
+- On round call, every validators will update data and cease off-chain data fetching (or just store that last on-chain updated data).
+- On voting phase, NeuRacle component will randomly choose a leader for that round, get that leader data and have validators vote on that data. The leader can be "random verified" by only choosing the middle validator that update NeuRacle datas in the stream of data validation transactions done at almost the same time.
+- On round conclude, NeuRacle component will compute the voting result, update data, share the reward and punish untruthful behaviors.
+
+Pros: Since the last approach will punish any validator that has even the slightly bit difference in data (might come from network delay), this approach will help those validators with low equipment to participate and get reward, further pushing decentralization. 
+
+Cons: Since this approach help the validator with low equipment, it will somehow affect security. This approach also contain an extra voting phase in a data-feeding round, make a round more fee costly and create more room for bugs, exploits and malicious behaviors.
+
 ## Security, Utility
 
 ### What bad things won't happend on NeuRacle?
