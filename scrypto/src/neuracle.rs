@@ -6,7 +6,7 @@
 //! 
 //! Personally, I also don't recommend having these rate changable since that will come at the cost of community trust.
 //! 
-//! P/s: Because NeuRacle has almost the same Consensus model as Radix, Radix token can easily become NeuRacle service provider by just utilize it's current decentralized consensus network.
+//! P/s: Because NeuRacle has almost the same Consensus model as Radix, Radix token can easily become NeuRacle medium by just utilize it's current decentralized consensus network.
 //! This mean beside validating transaction, Radix validator can also participate on data feeding and create more utility for Radix token.
 
 use scrypto::prelude::*;
