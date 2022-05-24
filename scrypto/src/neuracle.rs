@@ -79,7 +79,6 @@ blueprint! {
 
     impl NeuRacle {
 
-        ///The output is NeuRacle Component address, initial Neura token bucket and the admin badge.
         pub fn new(
             medium_token: ResourceAddress, 
             admin_badge: ResourceAddress, 
