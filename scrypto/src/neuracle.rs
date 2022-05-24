@@ -375,7 +375,7 @@ blueprint! {
         /// This method will check on the active status of validators and can only advance if >2/3 validator is active.
         /// After that, this method will get the datas with the most weight, check if it > 2/3 vote weight,
         /// feed that on NeuRacle, reward the validators provided same datas and punish those didn't.
-        /// The person who end a round will be rewarded 2 times payrate (Because calling this method is more costly on xrd fee than start a round)
+        /// The person who end a round will be rewarded 2 times payrate (Assuming call this method will more costly on xrd fee than start a round)
         pub fn end_round(&mut self) -> Bucket {
             
             assert!(
