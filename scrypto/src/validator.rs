@@ -1,7 +1,5 @@
 //! [Validator] is the blueprint to create new validator for NeuRacle ecosystem.
 //! User can stake to, or unstake, withdraw from validators through this blueprint.
-//! 
-//! Other DPoS projects can also utilize this blueprint to build staking, voting mechanisms.
 
 use scrypto::prelude::*;
 use crate::utilities::*;
@@ -50,8 +48,7 @@ blueprint! {
     }
 
     impl Validator {
-
-        /// Other dev can use these input arguments for their own project.
+        
         pub fn new(medium_token: ResourceAddress, badge: ResourceAddress, neura_controller_badge: ResourceAddress, name: String, fee: Decimal, unstake_delay: u64) -> ComponentAddress {
 
             assert_fee(fee);
