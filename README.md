@@ -83,7 +83,7 @@ There are 5 mains entites in NeuRacle ecosystem: **Users**, **Validators**, **Ne
 
 **NeuRacle Gateway** is a **decentralized off-chain entity** that will play role as a medium to automatically read data sources on-chain, use the source to fetch data off-chain, and feeding that data on-chain on validator behalf.
 
-**Users** will have to take responsibility on the accessibility of sources. The data source can be public, or private data. User will have to provide an online and accessible API (and key, if that's a private data) to the NeuRacle Gateway. NeuRacle will also help user to choose (or host) an API that return the exact data user want, **but will not buy the data on user's behalf**.
+**Users** will have to take responsibility on the accessibility of sources. The data source can be public, or private data. User will have to provide an online and accessible API (and key, if that's a private data) to the NeuRacle Gateway. NeuRacle will also help user to choose (or host) an API that return the exact data user want.
 
 To help the Gateway feedback the precise data that users need, the data source API should return only that one specific data. It shouldn't be a chunk of datas.
 
