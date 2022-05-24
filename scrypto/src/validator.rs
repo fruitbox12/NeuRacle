@@ -342,7 +342,7 @@ blueprint! {
 
         }
 
-        /// Punished methor for untruthful validator
+        /// Punished method for untruthful validator
         pub fn burn(&mut self, rate: Decimal) {
 
             let amount = self.staked_vault.amount();
