@@ -84,9 +84,12 @@ blueprint! {
             admin_badge: ResourceAddress, 
             mint_controller_badge: Bucket, 
             controller_badge: ResourceAddress, 
-            validator_cap: usize, round_length: u64, 
-            pay_rate: Decimal, fee_stablecoin: Decimal, 
-            unstake_delay: u64, reward_rate: Decimal, 
+            validator_cap: usize, 
+            round_length: u64, 
+            pay_rate: Decimal, 
+            fee_stablecoin: Decimal, 
+            unstake_delay: u64, 
+            reward_rate: Decimal, 
             punishment: Decimal) -> ComponentAddress {
 
             let system_time = Runtime::current_epoch() / round_length;
