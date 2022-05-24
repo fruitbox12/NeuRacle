@@ -69,7 +69,6 @@ blueprint! {
                 .method("change_fee", rule!(require(badge)))
                 .method("withdraw_fee", rule!(require(badge)))
                 .method("update_data", rule!(require(badge)))
-                .method("vote", rule!(require(badge)))
                 .method("round_start", rule!(require(neura_controller_badge)))
                 .method("get_datas", rule!(require(neura_controller_badge)))
                 .method("mint", rule!(require(neura_controller_badge)))
