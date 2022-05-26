@@ -201,7 +201,7 @@ Although such a bad thing might happen on NeuRacle, it wouldn't be a critical pr
 
 Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle will include a function to generate random number from a verified seed: "Unix time from NeuRacle service", "Crypto, asset price from NeuRacle service", "The middle address that update NeuRacle datas in the stream of data validation transactions done at almost the same time",... All these data are verified to have a degree of "entropy".
 
-## License & p/s
+## License & P/s
 
 This work is licensed under MIT and Apache 2.0.
 
