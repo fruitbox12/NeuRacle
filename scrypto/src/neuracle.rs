@@ -125,7 +125,6 @@ blueprint! {
                 .method("set_unstake_delay", rule!(require(admin_badge)))
                 .method("new_stable_coin_project", rule!(require(admin_badge)))
                 .method("set_round_length", rule!(require(admin_badge)))
-                .method("new_api", rule!(require(controller_badge)))
                 .default(rule!(allow_all));
 
             let component = Self {
@@ -507,7 +506,7 @@ blueprint! {
         }
 
         pub fn advance_stage(&mut self) {
-            assert!(self.stage == 2);
+            assert!(self.stage == 1);
             self.stage += 1
         }
 
