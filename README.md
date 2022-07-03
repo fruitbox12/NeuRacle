@@ -41,11 +41,13 @@ Components = Components.
 
 ## Quick Start
 
+***For a simple showcase**, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting. The prototype also won't use **NeuRacle Storage** or **User Incentive Program** (more detail on **System Explaination**)*
+
 *For windows user:* if you has git installed with [git bash](https://www.stanleyulili.com/git/how-to-install-git-bash-on-windows/) and [VSCode](https://code.visualstudio.com/), you should be able to run .sh file through git bash
 
 ![](gitbash.PNG)
 
-Clone this git repository: `git clone https://github.com/unghuuduc/NeuRacle`
+Clone this git repository: `git clone https://github.com/radixdlt/scrypto-challenges && cd 2-oracles/NeuRacle`
 
 ### Backend quick testing
 
@@ -113,7 +115,7 @@ The *incentive percent* will be a hard choice for NeuRacle operator, since if th
 
 Undoubtedly, the *incentive percent* is the minimum threshold in which third-party will re-route NeuRacle datas make their user has to pay (based on game-theory). And as the consequence, those third-party also won't have any method to prevent their user won't do the same. In the end, third data market competetion will just destroy themselves and come back to NeuRacle (The loop will make them reduce their data price to the minimum threshold).
 
-That's only possible with a incentive program. As long as the third-party can get enough benefit from re-routing the data, they will continue to do so.
+That's only possible with an incentive program. As long as the third-party can get enough benefit from re-routing the data, they will continue to do so.
 
 ### Delegated Proof of Stake
 
@@ -143,8 +145,6 @@ Round concluded requirement is >2/3 active validators.
 
 Datas with >2/3 staked weight of that round will also be validated.
 
-**For a simple showcase**, this prototype will be un-sharded, that mean each validators will validate all datas at the same time (Not divided into validator sets to bring more scalability or divided into data sources to bring more security). Datas will also be validated (Reaching Consensus) in 1 round of voting. The prototype also won't use NeuRacle Storage or User Incentive Program.
-
 ## Some thought about NeuRacle
 
 ### Why one source?
@@ -157,13 +157,13 @@ Eg: Bob operating a USX stable coin project and using aggregrated "XRD/USD last 
 
 This won't just stay on crypto world, on real world too, different address, location, seller will provide different information. USA oil price will ofc different from Russia oil price. Pork from your locally will ofc different from the farm.
 
-Providers, sellers can also use NeuRacle service to feed their product's price data on-chain and sell NFT proof of owning the product on DeFi market when they **don't even need to know about their buyer**. The product can be any thing like real estate, gold, diamond, or even daily grocery,.. 
+Providers, sellers can also use NeuRacle service to feed their product's price data on-chain and sell NFT proof of owning the product on DeFi market when they **don't even need to know about their buyer**. The product can be anything like real estate, gold, diamond, or even daily grocery,.. 
 
 Off-chain identity can also do data aggregration and ensure some degree of decentralization (Eg: Flux, SurpraOracle). Therefore, user can buy that data and make a data feeding request on NeuRacle.
 
 ### Why don't just use those off-chain decentralized data?
 
-To feed any off-chain data, the oracle still need to rely on "a trusted bridge" or "a trusted medium", lead to a single point of failure, eg: [Ronin bridge](https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack). However, NeuRacle use a large set of validators to ensure decentralized, trustless data feeding.
+To feed any off-chain data, the oracle still need to rely on "a trusted bridge" or "a trusted medium", lead to a single point of failure or highly centralized, eg: [Ronin bridge](https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack). However, NeuRacle use a large set of validators to ensure decentralized, trustless data feeding.
 
 ### Other approach
 
@@ -197,9 +197,11 @@ Although such a bad thing might happen on NeuRacle, it wouldn't be a critical pr
 
 **Slow finality before sharded Cerberus**: As explained above, before Radix network is fully sharded, validators has to make data feed transactions in sequence.
 
-### Can NeuRacle do VRF?
+### What can't this NeuRacle prototype do yet?
 
-Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle will include a function to generate random number from a verified seed: "Unix time from NeuRacle service", "Crypto, asset price from NeuRacle service", "The middle address that update NeuRacle datas in the stream of data validation transactions done at almost the same time",... All these data are verified to have a degree of "entropy".
+- **VRF**: Unfortunately, current NeuRacle prototype can't do VRF. In the future, NeuRacle will include a function to generate random number from a verified seed: "Unix time from NeuRacle service", "Crypto, asset price from NeuRacle service", "The middle address that update NeuRacle datas in the stream of data validation transactions done at almost the same time",... All these data are verified to have a degree of "entropy".
+
+- **Private data feeding**: Currently, all data verified on NeuRacle prototype is stored on NeuRacle component state and is available for any off-chain reading. In the future, NeuRacle will include an Encrypt - Decrypt tool for this specific usecase.
 
 ## License & P/s
 
