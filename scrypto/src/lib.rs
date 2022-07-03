@@ -19,5 +19,5 @@
 mod validator;
 mod utilities;
 mod neura_stable_coin;
-mod neuracle;
+pub mod neuracle;
 mod neura_token;

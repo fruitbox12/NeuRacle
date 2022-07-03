@@ -162,7 +162,7 @@ blueprint! {
             self.staked_vault.amount()
         }
 
-        pub fn unstake(&mut self, amount: Decimal, mut identity: Bucket) -> Bucket {
+        pub fn unstake(&mut self, amount: Decimal, identity: Bucket) -> Bucket {
 
             assert_resource(identity.resource_address(), self.staker_badge, identity.amount(), dec!("1"));
             
@@ -217,7 +217,7 @@ blueprint! {
         }
 
 
-        pub fn stop_unstake(&mut self, mut identity: Bucket) -> Bucket {
+        pub fn stop_unstake(&mut self, identity: Bucket) -> Bucket {
 
             assert_resource(identity.resource_address(), self.staker_badge, identity.amount(), dec!("1"));
 
@@ -257,7 +257,7 @@ blueprint! {
             return identity
         }
 
-        pub fn withdraw(&mut self, amount: Decimal, mut identity: Bucket) -> (Bucket, Bucket) {
+        pub fn withdraw(&mut self, amount: Decimal, identity: Bucket) -> (Bucket, Bucket) {
 
             assert_resource(identity.resource_address(), self.staker_badge, identity.amount(), dec!("1"));
 

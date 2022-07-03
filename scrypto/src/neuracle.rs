@@ -167,7 +167,7 @@ blueprint! {
 
             let validator_id: NonFungibleId = NonFungibleId::random();
 
-            let mut badge = self.controller_badge.authorize(|| {
+            let badge = self.controller_badge.authorize(|| {
                 borrow_resource_manager!(self.validator_badge)
                 .mint_non_fungible(&validator_id, ValidatorData{
                     name: name.clone(), 
@@ -199,7 +199,7 @@ blueprint! {
 
             let validator_id: NonFungibleId = NonFungibleId::random();
             
-            let mut badge = self.controller_badge.authorize(|| {
+            let badge = self.controller_badge.authorize(|| {
                 borrow_resource_manager!(self.validator_badge)
                 .mint_non_fungible(&validator_id, ValidatorData{
                     name: name.clone(),
@@ -263,7 +263,7 @@ blueprint! {
             
         }
 
-        pub fn refund_account(&mut self, mut identity: Bucket, mut payment: Bucket) -> (Bucket, Bucket) {
+        pub fn refund_account(&mut self, identity: Bucket, mut payment: Bucket) -> (Bucket, Bucket) {
 
             let amount = payment.amount();
 
