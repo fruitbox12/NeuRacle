@@ -263,7 +263,7 @@ blueprint! {
             
         }
 
-        pub fn refund_account(&mut self, identity: Bucket, mut payment: Bucket) -> (Bucket, Bucket) {
+        pub fn refund_account(&mut self, identity: Proof, mut payment: Bucket) -> Bucket {
 
             let amount = payment.amount();
 
@@ -289,11 +289,11 @@ blueprint! {
             
             info!("You can access your data until epoch {}", end);
 
-            return (identity, payment)
+            return payment
 
         }
 
-        pub fn get_data(&self, identity: Bucket) -> (Bucket, String) {
+        pub fn get_data(&self, identity: Proof) -> String {
 
             assert_resource(identity.resource_address(), self.user_badge, identity.amount(), dec!("1"));
             
@@ -306,7 +306,9 @@ blueprint! {
 
             let my_data = self.datas.get(&data.api).unwrap().clone();
 
-            return (identity, my_data)
+            identity.drop();
+
+            return my_data
         }
 
         /// This method will check the staking weight of each validator, set their round start status (so they're able to update data), and reset their active status.

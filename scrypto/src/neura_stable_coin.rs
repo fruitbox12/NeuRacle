@@ -75,9 +75,7 @@ blueprint! {
 
             let neuracle: NeuRacle = self.neuracle.into();
 
-            let (data_badge, price) = neuracle.get_data(self.data_badge.take(dec!("1")));
-
-            self.data_badge.put(data_badge);
+            let price = neuracle.get_data(self.data_badge.create_proof());
 
             let price = Decimal::from(price);
 
