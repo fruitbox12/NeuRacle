@@ -16,7 +16,7 @@
 //! 
 //! This is only a NeuRacle prototype that work with-out sharding.
 
-mod validator;
+pub mod validator;
 mod utilities;
 mod neura_stable_coin;
 pub mod neuracle;
